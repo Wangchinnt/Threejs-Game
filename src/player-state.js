@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 
 export const player_state = (() => {
+    
+    // abstract state class
     class State {
       constructor(parent) {
         this._parent = parent;
@@ -11,53 +13,78 @@ export const player_state = (() => {
       Exit() {}
       Update() {}
     };
-  
+    
+    // idle state
     class IdleState extends State {
       constructor(parent) {
         super(parent);
       }
-  
-      Enter() {
-        this._parent._velocity.x = 0;
-        this._parent._velocity.z = 0;
+      get Name() {
+        return 'idle';
       }
-  
-      Update(timeElapsed, input) {
-        if (input._keys.forward || input._keys.backward) {
+
+      Enter(prevState) {
+        const idleAction = this._parent._proxy._animations['idle'].action; // for the idle animation
+        if (prevState) {
+          const preAction = this._parent._proxy._animations[prevState.Name].action;
+          idleAction.time = 0.0;
+          idleAction.enabled = true;
+          idleAction.setEffectiveTimeScale(1.0);
+          idleAction.setEffectiveWeight(1.0);
+          idleAction.crossFadeFrom(preAction, 0.25, true);
+          idleAction.play();
+        }
+        else {
+          idleAction.play();
+        }
+      }
+
+      Exit() {
+      }
+
+      Update(_, input) {
+        if (input._keys.forward || input._keys.backward || input._keys.left || input._keys.right) {
           this._parent.SetState('walk');
         }
       }
     };
-  
+
+    // walk state
     class WalkState extends State {
       constructor(parent) {
         super(parent);
       }
-  
-      Enter() {
-        this._parent._velocity.x = 0;
-        this._parent._velocity.z = 0;
+
+      get Name() {
+        return 'walk';
       }
-  
+
+      Enter(prevState) {
+        const walkAction = this._parent._proxy._animations['walk'].action;
+        if (prevState) {
+          const prevAction = this._parent._proxy._animations[prevState.Name].action;
+          walkAction.enabled = true;
+          walkAction.time = 0.0;
+          walkAction.setEffectiveTimeScale(1.0);
+          walkAction.setEffectiveWeight(1.0);
+          walkAction.crossFadeFrom(prevAction, 0.1, true);
+          walkAction.play();
+        }
+        else {
+          walkAction.play();
+        }
+      }
+
+      Exit() {
+      }
+
       Update(timeElapsed, input) {
-        if (input._keys.forward) {
-          this._parent._velocity.z = -this._parent._speed;
-        }
-        if (input._keys.backward) {
-          this._parent._velocity.z = this._parent._speed;
-        }
-        if (input._keys.left) {
-          this._parent._velocity.x = -this._parent._speed;
-        }
-        if (input._keys.right) {
-          this._parent._velocity.x = this._parent._speed;
-        }
-  
-        if (!input._keys.forward && !input._keys.backward) {
+        if (!input._keys.forward && !input._keys.backward && !input._keys.left && !input._keys.right) {
           this._parent.SetState('idle');
         }
       }
-    };
+    }
+    
   
     return {
       PlayerState: State,
