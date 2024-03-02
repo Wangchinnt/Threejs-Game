@@ -1,116 +1,115 @@
 import * as THREE from 'three';
-
 export const entity = (() => {
 
   class Entity {
     constructor() {
       this._name = null;
       this._components = {};
+
       this._position = new THREE.Vector3();
       this._rotation = new THREE.Quaternion();
-      this._eventHandlers = {};
-      this._parentEntity = null;
+      this._handlers = {};
+      this._parent = null;
     }
 
-    // 
-    _registerEventHandler(eventName, handler) {
-      if (!(eventName in this._eventHandlers)) {
-        this._eventHandlers[eventName] = [];
+    _RegisterHandler(n, h) {
+      if (!(n in this._handlers)) {
+        this._handlers[n] = [];
       }
-      this._eventHandlers[eventName].push(handler);
+      this._handlers[n].push(h);
     }
 
-    setParentEntity(parent) {
-      this._parentEntity = parent;
+    SetParent(p) {
+      this._parent = p;
     }
 
-    setName(name) {
-      this._name = name;
+    SetName(n) {
+      this._name = n;
     }
 
-    get name() {
+    get Name() {
       return this._name;
     }
 
-    setActive(active) {
-      this._parentEntity.setEntityActive(this, active);
+    SetActive(b) {
+      this._parent.SetActive(this, b);
     }
 
-    addComponent(component) {
-      component.setParentEntity(this);
-      this._components[component.constructor.name] = component;
-      component.initComponent();
+    AddComponent(c) {
+      c.SetParent(this);
+      this._components[c.constructor.name] = c;
+
+      c.InitComponent();
     }
 
-    getComponent(componentName) {
-      return this._components[componentName];
+    GetComponent(n) {
+      return this._components[n];
     }
 
-    findEntity(entityName) {
-      return this._parentEntity.getEntity(entityName);
+    FindEntity(n) {
+      return this._parent.Get(n);
     }
 
-    broadcastMessage(message) {
-      if (!(message.topic in this._eventHandlers)) {
+    Broadcast(msg) {
+      if (!(msg.topic in this._handlers)) {
         return;
       }
 
-      for (let currentHandler of this._eventHandlers[message.topic]) {
-        currentHandler(message);
+      for (let curHandler of this._handlers[msg.topic]) {
+        curHandler(msg);
       }
     }
 
-    setPosition(position) {
-      this._position.copy(position);
-      this.broadcastMessage({
+    SetPosition(p) {
+      this._position.copy(p);
+      this.Broadcast({
           topic: 'update.position',
           value: this._position,
       });
     }
 
-    setQuaternion(rotation) {
-      this._rotation.copy(rotation);
-      this.broadcastMessage({
+    SetQuaternion(r) {
+      this._rotation.copy(r);
+      this.Broadcast({
           topic: 'update.rotation',
           value: this._rotation,
       });
     }
 
-    update(timeElapsed) {
-      for (let key in this._components) {
-        this._components[key].update(timeElapsed);
+    Update(timeElapsed) {
+      for (let k in this._components) {
+        this._components[k].Update(timeElapsed);
       }
     }
   };
-  
-  // Define a component class
+
   class Component {
     constructor() {
-      this._parentEntity = null;
+      this._parent = null;
     }
 
-    setParentEntity(parent) {
-      this._parentEntity = parent;
+    SetParent(p) {
+      this._parent = p;
     }
 
-    initComponent() {}
+    InitComponent() {}
 
-    getComponent(componentName) {
-      return this._parentEntity.getComponent(componentName);
+    GetComponent(n) {
+      return this._parent.GetComponent(n);
     }
 
-    findEntity(entityName) {
-      return this._parentEntity.findEntity(entityName);
+    FindEntity(n) {
+      return this._parent.FindEntity(n);
     }
 
-    broadcastMessage(message) {
-      this._parentEntity.broadcastMessage(message);
+    Broadcast(m) {
+      this._parent.Broadcast(m);
     }
 
-    update(_) {}
+    Update(_) {}
 
-    _registerEventHandler(eventName, handler) {
-      this._parentEntity._registerEventHandler(eventName, handler);
+    _RegisterHandler(n, h) {
+      this._parent._RegisterHandler(n, h);
     }
   };
 

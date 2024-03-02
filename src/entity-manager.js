@@ -29,8 +29,8 @@ export const entity_manager = (() => {
         this._entitiesMap[name] = entity;
         this._entities.push(entity);
   
-        e.SetParent(this);
-        e.SetName(name);
+        entity.SetParent(this);
+        entity.SetName(name);
       }
   
       SetActive(entity, isActive) {
@@ -46,7 +46,7 @@ export const entity_manager = (() => {
   
       updateEntities(timeElapsed) {
         for (let entity of this._entities) {
-          entity.update(timeElapsed);
+          entity.Update(timeElapsed);
         }
       }
     }

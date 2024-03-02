@@ -3,14 +3,14 @@ import { entity } from './entity';
 
 export const player_input = (() => {
 
-    class PlayerInput extends entity.Component {
-    constructor(params) {
+    class  BasicCharacterControllerInput extends entity.Component {
+    constructor() {
         super();
-        this._params = params;
+        //this._params = params;
         this._Init();
     }
         _Init() {
-          this._Keys = {
+          this._keys = {
             forward: false,
             backward: false,
             left: false,
@@ -49,32 +49,32 @@ export const player_input = (() => {
               break;
           }
         }
-          _onKeyUP(event) {
+          _onKeyUp(event) {
             switch (event.keyCode) {
               case 87 : // w
-                this._keys.forward = true;
+                this._keys.forward = false;
                 break;
               case 65: // a
-                this._keys.left = true;
+                this._keys.left = false;
                 break;
               case 83: // s
-                this._keys.backward = true;
+                this._keys.backward = false;
                 break;
               case 68: // d
-                this._keys.right = true;
+                this._keys.right = false;
                 break;
               case 69: // e
-                this._keys.pickup = true;
+                this._keys.pickup = false;
                 break;
               case 70: // f
-                this._keys.slice = true;
+                this._keys.slice = false;
                 break;
               case 80: // p
-                this._keys.pause = true;
+                this._keys.pause = false;
                 break;
             }
         }
       };
-    return {PlayerInput: PlayerInput};
+    return {BasicCharacterControllerInput:  BasicCharacterControllerInput};
 
   })();
