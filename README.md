@@ -14,11 +14,11 @@
 ### Two ways for installing
 #### From three.js document
 1. Install [Node.js](https://https://nodejs.org/en). We'll need it to load manage dependencies and to run our build tool.
-2. Install three.js and a build tool, [vite](https://https://vitejs.dev/), using a [terminal](https://www.joshwcomeau.com/javascript/terminal-for-js-devs/) in your project folder. Vite will be used during development, but it isn't part of the final webpage. If you prefer to use another build tool, that's fine — we support modern build tools that can import [ES Modules](https://eloquentjavascript.net/3rd_edition/10_modules.html#h_zWTXAU93DC).
+2. Install three.js and a build tool, [vite](https://https://vitejs.dev/) using a [terminal](https://www.joshwcomeau.com/javascript/terminal-for-js-devs/) in your project folder. Vite will be used during development, but it isn't part of the final webpage. If you prefer to use another build tool, that's fine — we support modern build tools that can import [ES Modules](https://eloquentjavascript.net/3rd_edition/10_modules.html#h_zWTXAU93DC).
  
    ```
     # three.js
-    npm install --save three
+    npm install --save 
 
     # vite
     npm install --save-dev vite
@@ -37,7 +37,7 @@
    npx vite
 4. If everything went well, you'll see a URL like http://localhost:5173 appear in your terminal, and can open that URL to see your web application.
 ## Credits
-Thanks to [CodeMonkey](https://(https://unitycodemonkey.com/)) for the game idea. This project is heavily inspired on his game. Also, big thanks to the authors of youtube three.js tutorial [SimonDev]([https://(https://www.youtube.com/@simondev758)) and [Chris Courses]([https://](https://www.youtube.com/@ChrisCourses)). Without their source code, this project would have been impossible.
+Thanks to [CodeMonkey](https://https://unitycodemonkey.com/) for the game idea. This project is heavily inspired on his game. Also, big thanks to the authors of youtube three.js tutorial [SimonDev](https://https://www.youtube.com/@simondev758) and [Chris Courses](https://www.youtube.com/@ChrisCourses). Without their source code, this project would have been impossible.
 ## License
 This template and the code in it is licensed under the [MIT License]([https://](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)).
 If you use this on your own repositories, please add a link back to this repo :D
