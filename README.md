@@ -39,5 +39,5 @@
 ## Credits
 Thanks to [CodeMonkey](https://https://unitycodemonkey.com/) for the game idea. This project is heavily inspired on his game. Also, big thanks to the authors of youtube three.js tutorial [SimonDev](https://https://www.youtube.com/@simondev758) and [Chris Courses](https://www.youtube.com/@ChrisCourses). Without their source code, this project would have been impossible.
 ## License
-This template and the code in it is licensed under the [MIT License]([https://](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)).
+This template and the code in it is licensed under the [MIT License](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt).
 If you use this on your own repositories, please add a link back to this repo :D
