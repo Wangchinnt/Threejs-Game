@@ -42,7 +42,7 @@ export const player_state = (() => {
       Exit() {
       }
 
-      Update(_, input) {
+      Update(timeElapsed, input) {
         if (input._keys.forward || input._keys.backward || input._keys.left || input._keys.right) {
           this._parent.SetState('walk');
         }
