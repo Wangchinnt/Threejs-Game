@@ -1,7 +1,7 @@
 # 3D Food bar: Cook
 
 ## Description
-
+...
 ## Requirements(with versions we tested on)
 - **nodejs** 20.11.0
 - **npm** 10.2.4
