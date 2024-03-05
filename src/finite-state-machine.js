@@ -1,3 +1,6 @@
+
+// THis is a simple implementation of a finite state machine in JavaScript.
+// The FiniteStateMachine class is the main class that manages the states and transitions between them.
 export const finite_state_machine = (() => {
 
     class FiniteStateMachine {

@@ -1,3 +1,5 @@
+// A class to manage entities, add, remove, update, and filter them
+// the entity manager is a singleton, so it will be created only once
 export const entity_manager = (() => {
 
     class EntityManager {

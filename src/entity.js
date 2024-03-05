@@ -1,17 +1,20 @@
 import * as THREE from 'three';
 export const entity = (() => {
 
+
+  // This is a abstract class for entities, it has a name, a list of components,
+  // position, rotation, and a list of handlers and its parent
   class Entity {
     constructor() {
       this._name = null;
       this._components = {};
-
       this._position = new THREE.Vector3();
       this._rotation = new THREE.Quaternion();
       this._handlers = {};
       this._parent = null;
     }
 
+    
     _RegisterHandler(n, h) {
       if (!(n in this._handlers)) {
         this._handlers[n] = [];
