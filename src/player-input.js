@@ -19,7 +19,7 @@ export const player_input = (() => {
             slice: false,
             pause: false,
           };
-          this._raycaster = new THREE.Raycaster();
+          //this._raycaster = new THREE.Raycaster();
           document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
           document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
           
@@ -44,7 +44,10 @@ export const player_input = (() => {
             case 70: // f
               this._keys.slice = true;
               break;
-            case 80: // p
+            case 80: // p or Ecs
+              this._keys.pause = true;
+              break;
+            case 27: // esc
               this._keys.pause = true;
               break;
           }
@@ -69,7 +72,10 @@ export const player_input = (() => {
               case 70: // f
                 this._keys.slice = false;
                 break;
-              case 80: // p
+              case 80: // p or Ecs
+                this._keys.pause = false;
+                break;
+              case 27: // esc
                 this._keys.pause = false;
                 break;
             }
