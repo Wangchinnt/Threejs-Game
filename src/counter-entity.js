@@ -637,7 +637,6 @@ export const counter_entity = (() => {
                     this._frying = false;
                     this._fryingProcess = 0;
                     this.hideProgressBar();
-                    this.hideWarning();
                 } else console.log('This is not a item for frying');
                 return item;
             } else if (!this._hasFood && item != null ) {

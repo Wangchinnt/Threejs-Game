@@ -31,10 +31,6 @@ export const deliveryManager = (() => {
             this._makeRecipe(this._containerWrapper);
             this._timer = 0;
         }
-        // if (this._containerWrapper.childElementCount > 3) {
-        //     const randomIndex = Math.floor(Math.random() * this._containerWrapper.childElementCount);
-        //     this._removeRecipe(randomIndex);
-        // }
 
     }
     _makeRecipe(containerWrapper) {
