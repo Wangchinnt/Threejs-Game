@@ -15,7 +15,7 @@ export const player_input = (() => {
             backward: false,
             left: false,
             right: false,
-            pickup: false,
+            interact: false,
             slice: false,
             pause: false,
           };
@@ -39,7 +39,7 @@ export const player_input = (() => {
               this._keys.right = true;
               break;
             case 69: // e
-              this._keys.pickup = true;
+              this._keys.interact = true;
               break;
             case 70: // f
               this._keys.slice = true;
@@ -67,7 +67,7 @@ export const player_input = (() => {
                 this._keys.right = false;
                 break;
               case 69: // e
-                this._keys.pickup = false;
+                this._keys.interact = false;
                 break;
               case 70: // f
                 this._keys.slice = false;

@@ -1,0 +1,146 @@
+#progressBar {
+  position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
+  top: 75.5%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 69%; /* Đưa progressBar ra giữa theo chiều ngang */
+  transform: rotateX(-45deg); /* Dịch chuyển progressBar lùi lại 50% chiều ngang và chiều dọc, để nó ra giữa màn hình */
+  height: 18px;
+  width: 130px;
+  background-color: rgb(90, 84, 84);
+  border: 6px solid rgb(0, 0, 0);
+  justify-content: flex-start;
+  display: flex;
+  visibility: hidden;
+}
+
+
+#progressBarFill {
+  background-color: rgb(255, 174, 0);
+  width: 0%;
+}
+
+#progressBar2 {
+  position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
+  top: 15.5%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 54.8%; /* Đưa progressBar ra giữa theo chiều ngang */
+  transform:  rotateX(-45deg); /* Dịch chuyển progressBar lùi lại 50% chiều ngang và chiều dọc, để nó ra giữa màn hình */
+  height: 18px;
+  width: 98px;
+  background-color: rgb(90, 84, 84);
+  border: 6px solid rgb(0, 0, 0);
+  justify-content: flex-start;
+  display: flex;
+  visibility: hidden;
+}
+
+
+#progressBar2Fill {
+  background-color: rgb(255, 174, 0);
+  width: 0%;
+}
+
+#progressBar3 {
+  position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
+  top: 15.5%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 61.5%; /* Đưa progressBar ra giữa theo chiều ngang */
+  transform: rotateX(-45deg); /* Dịch chuyển progressBar lùi lại 50% chiều ngang và chiều dọc, để nó ra giữa màn hình */
+  height: 18px;
+  width: 98px;
+  background-color: rgb(90, 84, 84);
+  border: 6px solid rgb(0, 0, 0);
+  justify-content: flex-start;
+  display: flex;
+  visibility: hidden;
+}
+
+
+#progressBar3Fill {
+  background-color: rgb(255, 174, 0);
+  width: 0%;
+}
+
+#progressBar4 {
+  position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
+  top: 46%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 83.5%; /* Đưa progressBar ra giữa theo chiều ngang */
+  transform: rotateX(-45deg); /* Dịch chuyển progressBar lùi lại 50% chiều ngang và chiều dọc, để nó ra giữa màn hình */
+  height: 18px;
+  width: 125px;
+  background-color: rgb(90, 84, 84);
+  border: 6px solid rgb(0, 0, 0);
+  justify-content: flex-start;
+  display: flex;
+  visibility: hidden;
+}
+
+
+#progressBar4Fill {
+  background-color: rgb(255, 174, 0);
+  width: 0%;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+#imageWarning {
+  position: fixed;
+  top: 41%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 85.5%; /* Đưa progressBar ra giữa theo chiều ngang */
+  display: flex;
+  width: 50px;
+  height: 50px;
+  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
+  visibility: hidden;
+}
+
+#imageWarning2 {
+  position: fixed;
+  top: 10.5%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 63%; /* Đưa progressBar ra giữa theo chiều ngang */
+  display: flex;
+  width: 50px;
+  height: 50px;
+  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
+  visibility: hidden  ;
+}
+
+.menu-container-wrapper {
+  position: fixed;
+  top: 10%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column; /* Xếp các container theo chiều dọc */
+  align-items: flex-start; /* Canh các container ở đầu hàng */
+}
+
+.menu-container {
+  background-color: black;
+  opacity: 0.8;
+  width: fit-content;
+  height: fit-content;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row; /* Xếp các thành phần trong container theo chiều dọc */
+  align-items: flex-start; /* Canh các thành phần ở đầu hàng */
+}
+
+.menu-container img {
+  width: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.menu-container div {
+  margin-top: 10px; /* Khoảng cách giữa chữ và ảnh */
+  align-items: flex-start;
+}

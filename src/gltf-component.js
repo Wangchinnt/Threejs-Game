@@ -4,9 +4,8 @@ import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader.js';
 
 import {entity} from './entity.js';
 
-
+// This is a component for static models and animated models, that allow to load a model .glb or.fbx
 export const gltf_component = (() => {
-
   class StaticModelComponent extends entity.Component {
     constructor(params) {
       super();
@@ -15,20 +14,25 @@ export const gltf_component = (() => {
   
     _Init(params) {
       this._params = params;
-  
       this._LoadModels();
     }
-  
+    // don't use yet
     InitComponent() {
       this._RegisterHandler('update.position', (m) => { this._OnPosition(m); });
+      this._RegisterHandler('update.quaternion', (m) => { this._OnQuaternion(m); });
     }
-
+    // don't use yet
     _OnPosition(m) {
       if (this._target) {
         this._target.position.copy(m.value);
       }
     }
-
+    _OnQuaternion(m) {
+      if (this._target) {
+        this._target.quaternion.copy(m.value);
+      }
+    }
+    // load the models
     _LoadModels() {
       if (this._params.resourceName.endsWith('glb') || this._params.resourceName.endsWith('gltf')) {
         this._LoadGLB();
@@ -39,46 +43,54 @@ export const gltf_component = (() => {
 
     _OnLoaded(obj) {
       this._target = obj;
-      this._params.scene.add(this._target);
-
       this._target.scale.setScalar(this._params.scale);
       this._target.position.copy(this._parent._position);
-
-      let texture = null;
-      if (this._params.resourceTexture) {
-        const texLoader = new THREE.TextureLoader();
-        texture = texLoader.load(this._params.resourceTexture);
-        texture.encoding = THREE.sRGBEncoding;
+      this._target.quaternion.copy(this._parent._quaternion);
+      let baseColorTexture = null;
+      let metallicTexture = null;
+    
+      // Load basecolor texture
+      if (this._params.baseColorTexture) {
+        const baseColorTexLoader = new THREE.TextureLoader();
+        baseColorTexture = baseColorTexLoader.load(this._params.baseColorTexture);
+        baseColorTexture.encoding = THREE.sRGBEncoding; // Set encoding
+      }
+    
+      // Load metallic texture
+      if (this._params.metallicTexture) {
+        const metallicTexLoader = new THREE.TextureLoader();
+        metallicTexture = metallicTexLoader.load(this._params.metallicTexture);
+        metallicTexture.encoding = THREE.sRGBEncoding; // Set encoding
       }
 
+      // Traverse through the model and apply textures to materials
       this._target.traverse(c => {
-        let materials = c.material;
-        if (!(c.material instanceof Array)) {
-          materials = [c.material];
-        }
-
-        for (let m of materials) {
-          if (m) {
-            if (texture) {
-              m.map = texture;
+        if (c.isMesh) {
+          const materials = Array.isArray(c.material) ? c.material : [c.material];
+          materials.forEach(material => {
+            if (baseColorTexture) {
+              material.map = baseColorTexture;
+            }
+            if (metallicTexture) {
+              material.metalnessMap = metallicTexture;
             }
             if (this._params.specular) {
-              m.specular = this._params.specular;
+              material.specular = this._params.specular;
             }
             if (this._params.emissive) {
-              m.emissive = this._params.emissive;
+              material.emissive = this._params.emissive;
             }
-          }
+          });
         }
         if (this._params.receiveShadow != undefined) {
           c.receiveShadow = this._params.receiveShadow;
-        }
-        if (this._params.castShadow != undefined) {
-          c.castShadow = this._params.castShadow;
-        }
-        if (this._params.visible != undefined) {
-          c.visible = this._params.visible;
-        }
+          }
+            if (this._params.castShadow != undefined) {
+              c.castShadow = this._params.castShadow;
+            }
+            if (this._params.visible != undefined) {
+              c.visible = this._params.visible;
+            }
       });
     }
 
@@ -99,7 +111,14 @@ export const gltf_component = (() => {
     }
 
     Update(timeInSeconds) {
+      if (this._target != null && this._parent.GetActive()) {
+      this._params.scene.add(this._target);
+      }
+      else if (this._target != null && !this._parent.GetActive()){
+        this._params.scene.remove(this._target);
+      }
     }
+
   };
 
 
@@ -137,51 +156,61 @@ export const gltf_component = (() => {
     _OnLoaded(obj, animations) {
       this._target = obj;
       this._params.scene.add(this._target);
-
       this._target.scale.setScalar(this._params.scale);
       this._target.position.copy(this._parent._position);
-
-      this.Broadcast({
-        topic: 'update.position',
-        value: this._parent._position,
-      });
-
-      let texture = null;
-      if (this._params.resourceTexture) {
-        const texLoader = new THREE.TextureLoader();
-        texture = texLoader.load(this._params.resourceTexture);
-        texture.encoding = THREE.sRGBEncoding;
+      this._target.quaternion.copy(this._parent._quaternion);
+      let baseColorTexture = null;
+      let metallicTexture = null;
+    
+      // Load basecolor texture
+      if (this._params.baseColorTexture) {
+        const baseColorTexLoader = new THREE.TextureLoader();
+        baseColorTexture = baseColorTexLoader.load(this._params.baseColorTexture);
+        baseColorTexture.encoding = THREE.sRGBEncoding; // Set encoding
+      }
+    
+      // Load metallic texture
+      if (this._params.metallicTexture) {
+        const metallicTexLoader = new THREE.TextureLoader();
+        metallicTexture = metallicTexLoader.load(this._params.metallicTexture);
+        metallicTexture.encoding = THREE.sRGBEncoding; // Set encoding
       }
 
+      // Traverse through the model and apply textures to materials
       this._target.traverse(c => {
-        let materials = c.material;
-        if (!(c.material instanceof Array)) {
-          materials = [c.material];
-        }
-
-        for (let m of materials) {
-          if (m) {
-            if (texture) {
-              m.map = texture;
+        if (c.isMesh) {
+          const materials = Array.isArray(c.material) ? c.material : [c.material];
+          materials.forEach(material => {
+            if (baseColorTexture) {
+              material.map = baseColorTexture;
+            }
+            if (metallicTexture) {
+              material.metalnessMap = metallicTexture;
             }
             if (this._params.specular) {
-              m.specular = this._params.specular;
+              material.specular = this._params.specular;
             }
             if (this._params.emissive) {
-              m.emissive = this._params.emissive;
+              material.emissive = this._params.emissive;
             }
-          }
+            if (this._params.emissiveIntensity) {
+              material.emissiveIntensity = this._params.emissiveIntensity;
+            }
+            material.shininess = 50;
+            material.color = material.color.clone().multiplyScalar(0.5); // Điều chỉnh tương phản
+          });
         }
         if (this._params.receiveShadow != undefined) {
           c.receiveShadow = this._params.receiveShadow;
-        }
-        if (this._params.castShadow != undefined) {
-          c.castShadow = this._params.castShadow;
-        }
-        if (this._params.visible != undefined) {
-          c.visible = this._params.visible;
-        }
+          }
+            if (this._params.castShadow != undefined) {
+              c.castShadow = this._params.castShadow;
+            }
+            if (this._params.visible != undefined) {
+              c.visible = this._params.visible;
+            }
       });
+      
 
       const _OnLoad = (anim) => {
         const clip = anim.animations[0];

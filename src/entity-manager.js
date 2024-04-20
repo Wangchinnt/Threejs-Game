@@ -1,9 +1,10 @@
 // A class to manage entities, add, remove, update, and filter them
 // the entity manager is a singleton, so it will be created only once
+
 export const entity_manager = (() => {
 
     class EntityManager {
-      constructor() {
+      constructor(params) {
         this._ids = 0;
         this._entitiesMap = {};
         this._entities = [];
@@ -34,6 +35,14 @@ export const entity_manager = (() => {
         entity.SetParent(this);
         entity.SetName(name);
       }
+      
+      Remove(name) {
+        if (!(name in this._entitiesMap)) {
+          return;
+        }
+        this._entitiesMap[name].SetActive(false);
+        delete this._entitiesMap[name];
+      }
   
       SetActive(entity, isActive) {
         const index = this._entities.indexOf(entity);
@@ -44,6 +53,9 @@ export const entity_manager = (() => {
         if (!isActive) {
           this._entities.splice(index, 1);
         }
+      }
+      GetEntities() {
+        return this._entities;
       }
   
       updateEntities(timeElapsed) {
