@@ -24,10 +24,10 @@ export const deliveryManager = (() => {
         this._timer = 0;
     }
     Update() {
-        if (this._containerWrapper.childElementCount < 6) {
+        if (this._containerWrapper.childElementCount < 5) {
             this._timer += 1;
         }
-        if (this._timer > 350) {
+        if (this._timer > 500) {
             this._makeRecipe(this._containerWrapper);
             this._timer = 0;
         }
