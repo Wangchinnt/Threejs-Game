@@ -12,12 +12,10 @@
   visibility: hidden;
 }
 
-
 #progressBarFill {
   background-color: rgb(255, 174, 0);
   width: 0%;
 }
-
 #progressBar2 {
   position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
   top: 15.5%; /* Đưa progressBar lên giữa theo chiều dọc */
@@ -31,13 +29,10 @@
   display: flex;
   visibility: hidden;
 }
-
-
 #progressBar2Fill {
   background-color: rgb(255, 174, 0);
   width: 0%;
 }
-
 #progressBar3 {
   position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
   top: 15.5%; /* Đưa progressBar lên giữa theo chiều dọc */
@@ -51,13 +46,10 @@
   display: flex;
   visibility: hidden;
 }
-
-
 #progressBar3Fill {
   background-color: rgb(255, 174, 0);
   width: 0%;
 }
-
 #progressBar4 {
   position: fixed; /* Sử dụng position: fixed để đảm bảo progressBar hiển thị ở vị trí cố định trên màn hình */
   top: 46%; /* Đưa progressBar lên giữa theo chiều dọc */
@@ -71,13 +63,168 @@
   display: flex;
   visibility: hidden;
 }
-
-
 #progressBar4Fill {
   background-color: rgb(255, 174, 0);
   width: 0%;
 }
+#imageWarning {
+  position: fixed;
+  top: 41%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 85.5%; /* Đưa progressBar ra giữa theo chiều ngang */
+  display: flex;
+  width: 50px;
+  height: 50px;
+  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
+  visibility: hidden;
+}
+#imageWarning2 {
+  position: fixed;
+  top: 10.5%; /* Đưa progressBar lên giữa theo chiều dọc */
+  left: 63%; /* Đưa progressBar ra giữa theo chiều ngang */
+  display: flex;
+  width: 50px;
+  height: 50px;
+  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
+  visibility: hidden;
+}
+.image-container {
+  position: fixed;
+  top: auto;
+  left: 75%;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  border: 7px solid black;
+  padding: 10px;
+}
+#imageSuccessful {
+  background-color: green;
+  visibility: hidden;
+}
+#imageFailed {
+  background-color: red;
+  visibility: hidden;
+}
+.image-text {
+  color: white;
+  font-size: 23px;
+  font-weight: 1000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  margin: 10px;
+}
+.image-container img {
+  margin-right: 10px;
+  width: 70px;
+  height: 70px;
+}
 
+.menu-container-wrapper {
+  position: fixed;
+  top: 12%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column; /* Xếp các container theo chiều dọc */
+  align-items: flex-start; /* Canh các container ở đầu hàng */
+}
+
+.menu-container {
+  background-color: black;
+  opacity: 0.8;
+  width: fit-content;
+  height: fit-content;
+  font-size: 17.5px;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row; /* Xếp các thành phần trong container theo chiều dọc */
+  align-items: flex-start; /* Canh các thành phần ở đầu hàng */
+}
+
+.menu-container img {
+  width: 35px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.menu-container div {
+  margin-top: 10px; /* Khoảng cách giữa chữ và ảnh */
+  align-items: flex-start;
+}
+
+.menu-container1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item {
+  font-size: 20px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+  background-color: #dcdcdc;
+}
+
+.menu-item.selected {
+  background-color: #6495ed;
+  color: white;
+}.menu-container1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item {
+  font-size: 20px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+  background-color: #dcdcdc;
+}
+
+.menu-item.selected {
+  background-color: #6495ed;
+  color: white;
+}
+.menu-container1 {
+  position: absolute;
+  top: 60%;
+  left: 30%;
+  width: 30%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.menu-background {
+  width: 100%; /* Đặt chiều rộng của hình ảnh là 100% của phần tử cha */
+  height: 100%; /* Đặt chiều cao của hình ảnh là 100% của phần tử cha */
+  position: fixed; /* Đặt vị trí của hình ảnh là cố định */
+  top: 0; /* Đặt vị trí top của hình ảnh là 0 */
+  left: 0; /* Đặt vị trí left của hình ảnh là 0 */
+  z-index: -1; /* Đặt z-index của hình ảnh là thấp hơn so với phần tử menu container, để hình ảnh hiển thị phía sau */
+  /* Bất kỳ quy tắc CSS nào khác bạn muốn áp dụng cho hình ảnh */
+}
 @keyframes blink {
   0% {
     opacity: 0.2;
@@ -90,57 +237,8 @@
   }
 }
 
-#imageWarning {
-  position: fixed;
-  top: 41%; /* Đưa progressBar lên giữa theo chiều dọc */
-  left: 85.5%; /* Đưa progressBar ra giữa theo chiều ngang */
-  display: flex;
-  width: 50px;
-  height: 50px;
-  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
-  visibility: hidden;
-}
-
-#imageWarning2 {
-  position: fixed;
-  top: 10.5%; /* Đưa progressBar lên giữa theo chiều dọc */
-  left: 63%; /* Đưa progressBar ra giữa theo chiều ngang */
-  display: flex;
-  width: 50px;
-  height: 50px;
-  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
-  visibility: hidden  ;
-}
-
-.menu-container-wrapper {
-  position: fixed;
-  top: 10%;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column; /* Xếp các container theo chiều dọc */
-  align-items: flex-start; /* Canh các container ở đầu hàng */
-}
-
-.menu-container {
-  background-color: black;
-  opacity: 0.8;
-  width: fit-content;
-  height: fit-content;
-  color: white;
-  padding: 10px;
-  margin: 10px;
-  display: flex;
-  flex-direction: row; /* Xếp các thành phần trong container theo chiều dọc */
-  align-items: flex-start; /* Canh các thành phần ở đầu hàng */
-}
-
-.menu-container img {
-  width: 50px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.menu-container div {
-  margin-top: 10px; /* Khoảng cách giữa chữ và ảnh */
-  align-items: flex-start;
+@keyframes hideImage {
+  100% {
+    visibility: hidden;
+  }
 }
