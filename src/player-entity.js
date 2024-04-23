@@ -192,9 +192,6 @@ export const player_entity = (() => {
                 inputVector.x = -1;
                 inputVector.y = -1;
             }
-            if (input._keys.pause) {
-                console.log('pause');
-            }
             this.rotationQuaternion.normalize();
             inputVector.normalize();
             this._direction = new THREE.Vector3(inputVector.x, 0, inputVector.y);
