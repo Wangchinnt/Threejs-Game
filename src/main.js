@@ -8,12 +8,109 @@ import { player_entity } from './player-entity.js';
 import { collider_component } from './collider-component.js';
 import { counter_entity } from './counter-entity.js';
 import { deliveryManager } from './deliveryManager-component.js';
+
+class GameMenu {
+  constructor() {
+    this.menuItems = ['Start Game', 'Options', 'Exit'];
+    this.selectedItemIndex = 0;
+    this.render();
+    this.addEventListeners();
+  }
+
+  render() {
+    // Tạo một phần tử div cho menu container
+    const menuContainer = document.createElement('div');
+    menuContainer.classList.add('menu-container1'); // Thêm lớp 'menu-container1' cho phần tử menu
+
+    // Tạo các phần tử menu item từ danh sách menuItems
+    this.menuItems.forEach((item, index) => {
+      const menuItem = document.createElement('div'); // Tạo một phần tử div cho mỗi menu item
+      menuItem.textContent = item; // Thiết lập nội dung của menu item là văn bản của mục trong danh sách menuItems
+      menuItem.classList.add('menu-item'); // Thêm lớp 'menu-item' cho phần tử menu item
+
+      // Nếu mục hiện tại được lặp lại có index bằng với index của mục đang được chọn, thêm lớp 'selected'
+      if (index === this.selectedItemIndex) {
+        menuItem.classList.add('selected');
+      }
+
+      menuContainer.appendChild(menuItem); // Thêm phần tử menu item vào trong phần tử menu container
+    });
+
+    // Thêm phần tử menu container vào body của trang web
+    document.body.appendChild(menuContainer);
+
+    // Tạo một phần tử img cho hình nền
+    const backgroundImage = document.createElement('img');
+    backgroundImage.src = 'Assets/_Assets/Textures/Menu background.jpg'; // Thay đổi 'path/to/your/image.jpg' thành đường dẫn thực tế của hình ảnh bạn muốn sử dụng
+    backgroundImage.classList.add('menu-background'); // Thêm lớp 'menu-background' cho phần tử hình nền
+
+    // Thêm phần tử hình nền vào body của trang web
+    document.body.appendChild(backgroundImage);
+  }
+
+  addEventListeners() {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowUp') {
+        this.moveSelectionUp();
+      } else if (event.key === 'ArrowDown') {
+        this.moveSelectionDown();
+      } else if (event.key === 'Enter') {
+        this.handleSelection();
+      }
+    });
+  }
+
+  moveSelectionUp() {
+    if (this.selectedItemIndex > 0) {
+      this.selectedItemIndex--;
+      this.updateMenu();
+    }
+  }
+
+  moveSelectionDown() {
+    if (this.selectedItemIndex < this.menuItems.length - 1) {
+      this.selectedItemIndex++;
+      this.updateMenu();
+    }
+  }
+
+  updateMenu() {
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach((menuItem, index) => {
+      if (index === this.selectedItemIndex) {
+        menuItem.classList.add('selected');
+      } else {
+        menuItem.classList.remove('selected');
+      }
+    });
+  }
+
+  handleSelection() {
+    const selectedItem = this.menuItems[this.selectedItemIndex];
+    if (selectedItem === 'Start Game') {
+      // Code to start the game
+      console.log('Starting the game...');
+      document.querySelector('.menu-container1').remove();
+      _APP = new GamePlay();
+    } else if (selectedItem === 'Options') {
+      // Code to show options menu
+      console.log('Showing options menu...');
+    } else if (selectedItem === 'Exit') {
+      // Code to exit the game
+      console.log('Exiting the game...');
+    }
+  }
+}
+
+
 class GamePlay {
     constructor() {
       this._Initialize();
     }
   
     _Initialize() {
+      this._isGameOver = false;
+      this._isGamePaused = false;
       this._threejs = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
@@ -23,7 +120,7 @@ class GamePlay {
       this._threejs.setPixelRatio(window.devicePixelRatio);
       this._threejs.setSize(window.innerWidth, window.innerHeight);
       this._threejs.domElement.id = 'threejs';
-  
+
       document.body.appendChild(this._threejs.domElement);
   
       window.addEventListener('resize', () => {
@@ -131,7 +228,6 @@ class GamePlay {
       this._previousRAF = null; 
       this._RAF()
     }
-
     _LoadMAP() {
       this._LoadClearCounters();
       this._LoadFoodCounters();
@@ -395,8 +491,6 @@ class GamePlay {
       this._entityManager.Add(e10, 'Cutting counter');
       console.log(e10);
     }
-    
-
     _LoadClearCounters() {
       // clear counters
       for (let i = 0; i < 6; i++) {
@@ -894,7 +988,6 @@ class GamePlay {
       e4.SetQuaternion(quaternion4);
       this._entityManager.Add(e4, 'Food counter');
     }
-
     _LoadPlayer() {
       const params = {
         camera: this._camera,
@@ -914,14 +1007,14 @@ class GamePlay {
       player.SetPosition(new THREE.Vector3(0, 0 ,0)); 
       this._entityManager.Add(player, 'player'); 
       console.log(player);
-
+    this._input = this._entityManager.Get('player').GetComponent('BasicCharacterControllerInput');
     }
 
     _OnWindowResize() {
-        this._camera.aspect = window.innerWidth / window.innerHeight;
-        this._camera.updateProjectionMatrix();
-        this._threejs.setSize(window.innerWidth, window.innerHeight);
-      }
+      this._camera.aspect = window.innerWidth / window.innerHeight;
+      this._camera.updateProjectionMatrix();
+      this._threejs.setSize(window.innerWidth, window.innerHeight);
+    }
     _updateElementsPosition() {
       console.log('update');
       // Lấy các phần tử progressBar và imageWarning
@@ -931,6 +1024,7 @@ class GamePlay {
       var progressBar4 = document.getElementById('progressBar4');
       var imageWarning = document.getElementById('imageWarning');
       var imageWarning2 = document.getElementById('imageWarning2');
+
       // Lấy kích thước của cửa sổ trình duyệt
       var windowWidth = window.innerWidth;
       var windowHeight = window.innerHeight;
@@ -963,7 +1057,6 @@ class GamePlay {
       imageWarning2.style.left = (windowWidth * 63) / 100 + 'px';
       imageWarning2.style.top = (windowHeight * 10.5) / 100 + 'px';
       }
-
     _RAF() {
          requestAnimationFrame((t) => {
           if (this._previousRAF === null) {
@@ -974,17 +1067,26 @@ class GamePlay {
           this._Step(t - this._previousRAF);
           this._previousRAF = t;
         });
+    }
+    _Step(timeElapsed) {
+      const timeElapsedS = Math.min(1.0 / 60.0, timeElapsed * 0.001);
+      console.log('loop');
+      if (this._input._keys.pause)
+      {
+        this._isGamePaused = !this._isGamePaused;
+        console.log('pause');
+        this._input._keys.pause = false;
       }
-      _Step(timeElapsed) {
-        const timeElapsedS = Math.min(1.0 / 60.0, timeElapsed * 0.001);
+      if (!this._isGamePaused)
         this._entityManager.updateEntities(timeElapsedS);
-      }
+        
+    }
 
 }
 let _APP = null;
 
 window.addEventListener('DOMContentLoaded', () => {
-  _APP = new GamePlay();
+  _APP = new GameMenu();
   console.log(_APP);
 });
 
