@@ -808,6 +808,8 @@ export const counter_entity = (() => {
             this._pos = params.pos;
             this._icon = this._loadIcon(params.iconPath, this._scene, this._pos.clone().add(new THREE.Vector3(-0.65 , 3, 0)), 1.5, new THREE.Vector3(Math.PI/2, Math.PI, 0));
             this._icon2 = this._loadIcon(params.iconPath, this._scene, this._pos.clone().add(new THREE.Vector3(0.85, 3, 0)), 1.5, new THREE.Vector3(Math.PI/2, Math.PI, 0));
+            this._successImage = document.getElementById('imageSuccessful');
+            this._failedImage = document.getElementById('imageFailed');
             this._iconSpeed = 0.55;
             this._minX = this._pos.x + 1.2;
             this._maxX = this._pos.x - 1.7;
@@ -846,8 +848,16 @@ export const counter_entity = (() => {
             if (nameOfRecipe != null) {
                 console.log('Delivered the recipe to the customer', nameOfRecipe);
                 this._parent.GetComponent('DeliveryManager').removeRecipe(nameOfRecipe);
+                this._successImage.style.visibility = 'visible';
+                setTimeout(() => {
+                    this._successImage.style.visibility = 'hidden';
+                }, 1500);
             }else {
-                console.log('failed to deliver the food to the customer', plate)
+                console.log('failed to deliver the food to the customer', plate);
+                this._failedImage.style.visibility = 'visible';
+                setTimeout(() => {
+                    this._failedImage.style.visibility = 'hidden';
+                }, 1500);
             }
             item.GetComponent('PlateEntity').ClearPlate();
             this._entitiesManager.Remove(item);
