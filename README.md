@@ -1,7 +1,18 @@
 # 3D Food bar: Cook
-
+![alt text](<Menu background.jpg>)
 ## Description
-...
+  - **The context**: In a fast food restaurant. Players act as chefs and servers, they can interact with food ingredients and kitchen utensils to prepare food. Players will participate in processing and delivering food at a counter according to the menu.
+- **Genre**: action, casual, strategy, multiplayer.
+- **Number of players**: Solo and multiplayer (max 4)
+- **Target audience**: PC players
+## Features (Currently)
+- **Single player mode.**
+- **Random order system with many different dishes.**
+- **Diverse player roles: chef, kitchen assistant.**
+- **Simple cooking system (slicing and frying)**
+- **Simple scoring system.**
+- **Basic user interface.**
+- **Simple control system, easy to use.**
 ## Requirements(with versions we tested on)
 - **nodejs** 20.11.0
 - **npm** 10.2.4
