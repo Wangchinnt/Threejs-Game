@@ -46,7 +46,7 @@ export const player_entity = (() => {
         // 
         _Init(params) { 
             this._params = params;
-            this._speed = 10;
+            this._speed = 11.5;
             this._direction = new THREE.Vector3(0,0,0);
             this._lastDirection = new THREE.Vector3(0,0,0);
             this._position = new THREE.Vector3();
@@ -60,6 +60,8 @@ export const player_entity = (() => {
             this._selectedCounter = null;
             this._itemBringing = null;
             this._isInteracting = false;
+            this._audioFootstep1 = 'Assets/_Assets/Sounds/SFX/SFX_footstep02_01.wav';
+            this._audioFootstep2 = 'Assets/_Assets/Sounds/SFX/SFX_footstep02_02.wav';
             this._LoadModels();
 
             //this._RegisterHandler('update', (m) => { this._Update(m); }); // update the character
@@ -150,7 +152,7 @@ export const player_entity = (() => {
 
             // movement
             const inputVector = new THREE.Vector2(0, 0);
-            const rotationSpeed = 5.0;
+            const rotationSpeed = 6.0;
             const controlObject = this._target;
             const rotationVector = new THREE.Vector3(0, 1, 0);
             
@@ -200,7 +202,6 @@ export const player_entity = (() => {
                 this._selectedCounter = this.CheckSelectionCollision();
             }
             
-            
         
             // Xác định vị trí tiếp theo dựa trên hướng di chuyển và tốc độ
             const nextPosition = this._parent.GetPosition().clone();
@@ -248,7 +249,6 @@ export const player_entity = (() => {
                     this._itemBringing = this._selectedCounter.GetComponent('DeliveryCounter').interact(this._itemBringing);
                 }
                 input._keys.interact = false;
-                console.log('Holding: ', this._itemBringing);   
             }
             else if (input._keys.slice && this._selectedCounter != null) {
                 let counter = this._selectedCounter.GetName();
@@ -265,9 +265,7 @@ export const player_entity = (() => {
                     this._itemBringing.SetQuaternion(this._lastQuaternion);
                 }
                 
-                
             }
-    
     }
         CheckSelectionCollision() {
             let manager = this._parent._parent;

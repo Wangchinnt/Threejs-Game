@@ -16,7 +16,7 @@ export const plate_entity = (() => {
         this._scene = params.scene;
         this._offsetX = 0.7;
         this._startPositionX = 0.75;
-        this._startPositionZ = 0.5;
+        this._startPositionZ = 1;
         this._offsetZ = 0.5;
         }
         

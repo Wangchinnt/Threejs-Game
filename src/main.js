@@ -11,7 +11,7 @@ import { deliveryManager } from './deliveryManager-component.js';
 
 class GameMenu {
   constructor() {
-    this.menuItems = ['Start Game', 'Options', 'Exit'];
+    this.menuItems = ['Multiplayer', 'Singleplayer', 'Option'];
     this.selectedItemIndex = 0;
     this.render();
     this.addEventListeners();
@@ -32,6 +32,13 @@ class GameMenu {
       if (index === this.selectedItemIndex) {
         menuItem.classList.add('selected');
       }
+
+      // Thêm sự kiện click cho mỗi menu item
+      menuItem.addEventListener('click', () => {
+        this.selectedItemIndex = index;
+        this.updateMenu();
+        this.handleSelection();
+      });
 
       menuContainer.appendChild(menuItem); // Thêm phần tử menu item vào trong phần tử menu container
     });
@@ -87,17 +94,16 @@ class GameMenu {
 
   handleSelection() {
     const selectedItem = this.menuItems[this.selectedItemIndex];
-    if (selectedItem === 'Start Game') {
-      // Code to start the game
-      console.log('Starting the game...');
-      document.querySelector('.menu-container1').remove();
-      _APP = new GamePlay();
-    } else if (selectedItem === 'Options') {
-      // Code to show options menu
-      console.log('Showing options menu...');
-    } else if (selectedItem === 'Exit') {
+    if (selectedItem === 'Multiplayer') {
+      console.log('Multiplayer selected');
+    } else if (selectedItem === 'Singleplayer') {
+       document.querySelector('.menu-container1').remove();
+       document.querySelector('.menu-background').remove();
+       _APP = null;
+       _APP = new GamePlay();
+    } else if (selectedItem === 'Option') {
       // Code to exit the game
-      console.log('Exiting the game...');
+
     }
   }
 }
@@ -109,8 +115,14 @@ class GamePlay {
     }
   
     _Initialize() {
+      this._isGameStarted = false;
       this._isGameOver = false;
       this._isGamePaused = false;
+      this._timer = 9000;
+      this._volume = 1;
+      this._countdownElement =  document.querySelector('.time');
+      this._countdownBackground = document.querySelector('.background');
+      this._loadingBackground = document.querySelector('.imageLoading');
       this._threejs = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
@@ -156,10 +168,22 @@ class GamePlay {
       light.shadow.camera.top = 100;
       light.shadow.camera.bottom = -100;
       this._scene.add(light);
-
-      let light1 = new THREE.AmbientLight(0xFFFFFF, 1.5);
+      let light1 = new THREE.AmbientLight(0xFFFFFF, 2.75);
       this._scene.add(light1);
 
+      //setup audio 
+      this._listener = new THREE.AudioListener();
+      this._camera.add(this._listener);
+
+      const backgroundSound = new THREE.Audio(this._listener);
+      const audioLoader = new THREE.AudioLoader();
+      audioLoader.load('Assets/_Assets/Sounds/Music/Music.wav', function(buffer) {
+        backgroundSound.setBuffer(buffer);
+        backgroundSound.setLoop(true);
+        backgroundSound.setVolume(1);
+        backgroundSound.play();
+      });
+      
 
       // // setup light helper
       // const helper = new THREE.DirectionalLightHelper( light, 5, 0xffff00 );
@@ -178,66 +202,112 @@ class GamePlay {
       // this._scene.add( axesHelper );
 
     
-      //setup a plane
-      let loader = new THREE.TextureLoader();
-      let texture = loader.load('Assets/_Assets/Meshes/Textures/Tiles_06_basecolor.jpg');
-      texture.wrapS = THREE.RepeatWrapping; // Cho phép texture lặp lại theo trục S (hoành độ)
-      texture.wrapT = THREE.RepeatWrapping; // Cho phép texture lặp lại theo trục T (tung độ)
-      texture.repeat.set(10, 10); // Lặp lại texture 10 lần theo cả hai trục
-      const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(31.2, 21.3, 10, 10),
-        new THREE.MeshPhongMaterial({
-           map: texture,
-          }))
-      plane.receiveShadow = true;
-      plane.rotation.x = -Math.PI / 2;
-      this._scene.add(plane);
-      // setup 4 wall
-      const wall1 = new THREE.Mesh(
-        new THREE.BoxGeometry(0.75, 14, 21),
-        new THREE.MeshToonMaterial({
-          color: 0x00578a,
-          fog: true,
-          fogColor: 0x3f7b9d,
-        }));
-      wall1.position.set(13.2 + 2, 0, 2);
-      this._scene.add( wall1);
-      const wall2 = new THREE.Mesh(
-        new THREE.BoxGeometry(0.75, 14, 21),
-        new THREE.MeshToonMaterial({
-          color: 0x00578a,
-          fog: true,
-          fogColor: 0x3f7b9d,
-        }));
-      wall2.position.set(-13.2 - 2, 0, 2);
-      this._scene.add( wall2);
-      const wall3 = new THREE.Mesh(
-        new THREE.BoxGeometry(30, 14, 0.75),
-        new THREE.MeshToonMaterial({
-          color: 0x00578a,
-          fog: true,
-          fogColor: 0x3f7b9d,
-        }));
-      wall3.position.set(0, 0, 12);
-      this._scene.add( wall3);
 
       this._entityManager = new entity_manager.EntityManager();
       this._LoadPlayer();
       this._LoadMAP();
       this._updateElementsPosition();
       this._previousRAF = null; 
-      this._RAF()
+      this._RAF();
+      this._updateTimer(this._timer/100);
+      this._countdownBackground.style.visibility = 'visible';
+      this._loadingBackground.style.visibility = 'visible';
+      setTimeout(() => {
+        this._loadingBackground.style.visibility = 'hidden';
+        this._isGameStarted = true;
+      }, 3200);
+
+    }
+
+    _updateTimer(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      const formattedMinutes = String(minutes).padStart(2, '0');
+      const formattedSeconds = remainingSeconds.toFixed(0).padStart(2, '0');
+      this._countdownElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    }
+    _gameOver(){
+      this._isGameOver = true;
+      this._isGameStarted = false;
+      this._isGamePaused = false;
+       // Tạo một phần tử div cho background của menu tạm dừng
+       const gameOverBackground = document.createElement('div');
+       gameOverBackground.classList.add('gameOver-background'); // Thêm lớp 'pause-menu-background' cho phần tử background
+ 
+       // Thêm phần tử background vào body của trang web
+       document.body.appendChild(gameOverBackground);
+      // Tạo một phần tử div cho chữ "Paused"
+      const gameText = document.createElement('div');
+      gameText.textContent = 'Game Over'; // Thiết lập nội dung là 'Paused'
+      gameText.classList.add('gameOver-text'); // Thêm lớp 'paused-text'
+      document.body.appendChild(gameText);
+      const scoreText = document.createElement('div');
+      scoreText.textContent = 'Delivered orders: ' + this._entityManager.Get('Delivery counter').GetComponent('DeliveryCounter').getScore(); // Thiết lập nội dung là 'Paused'
+      scoreText.classList.add('score-text'); // Thêm lớp 'paused-text'
+      document.body.appendChild(scoreText);
+    }
+    _gamePause(){
+
+      // Tạo một phần tử div cho background của menu tạm dừng
+      const pauseMenuBackground = document.createElement('div');
+      pauseMenuBackground.classList.add('pause-menu-background'); // Thêm lớp 'pause-menu-background' cho phần tử background
+
+      // Thêm phần tử background vào body của trang web
+      document.body.appendChild(pauseMenuBackground);
+      // Tạo một phần tử div cho menu container
+      const menuContainer = document.createElement('div');
+      menuContainer.classList.add('menu-container2'); // Thêm lớp 'menu-container2' cho phần tử menu
+
+      // Tạo một phần tử div cho chữ "Paused"
+      const pausedText = document.createElement('div');
+      pausedText.textContent = 'Paused'; // Thiết lập nội dung là 'Paused'
+      pausedText.classList.add('paused-text'); // Thêm lớp 'paused-text'
+
+      // Thêm phần tử chữ "Paused" vào phần tử menu container
+      document.body.appendChild(pausedText);
+
+      // Tạo các phần tử menu item từ danh sách menuItems
+      const menuItems = ['Resume', 'Options'];
+      menuItems.forEach((item, index) => {
+        const menuItem = document.createElement('div'); // Tạo một phần tử div cho mỗi menu item
+        menuItem.textContent = item; // Thiết lập nội dung của menu item là văn bản của mục trong danh sách menuItems
+        menuItem.classList.add('menu-item'); // Thêm lớp 'menu-item' cho phần tử menu item
+
+        // Nếu mục hiện tại được lặp lại có index bằng với index của mục đang được chọn, thêm lớp 'selected'
+        if (index === this.selectedItemIndex) {
+          menuItem.classList.add('selected');
+        }
+
+        // Thêm sự kiện click cho mỗi menu item
+        menuItem.addEventListener('click', () => {
+          switch (index) {
+            case 0: // Resume
+              // Thực hiện hành động để tiếp tục trò chơi
+              console.log('Resume clicked');
+              document.querySelector('.menu-container2').remove();
+              document.querySelector('.pause-menu-background').remove();
+              document.querySelector('.paused-text').remove();
+              this._isGamePaused = false;
+              break;
+            case 1: // Options
+              // Hiển thị cài đặt hoặc tùy chọn trò chơi
+              console.log('Options clicked');
+              break;
+            default:
+              break;
+          }
+        });
+
+      menuContainer.appendChild(menuItem); // Thêm phần tử menu item vào trong phần tử menu container
+      });
+
+      // Thêm phần tử menu container vào body của trang web
+      document.body.appendChild(menuContainer);
     }
     _LoadMAP() {
+      this._LoadWall();
       this._LoadClearCounters();
       this._LoadFoodCounters();
-      
-      // // deliveryManager
-      // const e = new entity.Entity();
-      // e.AddComponent(new deliveryManager.DeliveryManager({
-      // }));
-      // this._entityManager.Add(e, 'Delivery Manager');
-
 
       // plate counter
       const pos5 = new THREE.Vector3(-13.2, 0, 3.3);
@@ -268,6 +338,8 @@ class GamePlay {
         scene: this._scene, 
         pos: pos5,
         iconPath: 'Assets/_Assets/Textures/CircleDashed.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e5.SetPosition(pos5);
       e5.SetQuaternion(quaternion5);
@@ -303,7 +375,9 @@ class GamePlay {
         scene: this._scene, 
         pos: pos6,
         direction: 'up',
-        progressBarName: 'progressBar2'
+        progressBarName: 'progressBar2',
+        listener: this._listener,
+        volume: this._volume
         }));
       this._entityManager.Add(e6, 'Cutting counter');
       e6.SetPosition(pos6);
@@ -337,7 +411,9 @@ class GamePlay {
       e7.AddComponent(new counter_entity.TrashCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        pos: pos7
+        pos: pos7,
+        listener: this._listener,
+        volume: this._volume
         }));
       this._entityManager.Add(e7, 'Trash counter');
       e7.SetPosition(pos7);
@@ -374,7 +450,9 @@ class GamePlay {
         pos: pos8,
         quaternion: quaternion8,
         progressBarName: 'progressBar4',
-        warning: 'imageWarning'
+        warning: 'imageWarning',
+        listener: this._listener,
+        volume: this._volume
         }));
       this._entityManager.Add(e8, 'Stove counter');
       e8.SetPosition(pos8);
@@ -411,7 +489,9 @@ class GamePlay {
         pos: pos11,
         quaternion: quaternion11,
         progressBarName: 'progressBar3',
-        warning: 'imageWarning2'
+        warning: 'imageWarning2',
+        listener: this._listener,
+        volume: this._volume
         }));
       this._entityManager.Add(e11, 'Stove counter');
       e11.SetPosition(pos11);
@@ -446,7 +526,9 @@ class GamePlay {
         entitiesManager: this._entityManager,
         scene: this._scene, 
         pos: pos9,
-        iconPath: 'Assets/_Assets/Textures/Arrow.png'
+        iconPath: 'Assets/_Assets/Textures/Arrow.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e9.AddComponent(new deliveryManager.DeliveryManager({
       }));
@@ -484,7 +566,9 @@ class GamePlay {
         scene: this._scene, 
         pos: pos10,
         direction: 'down',
-        progressBarName: 'progressBar'
+        progressBarName: 'progressBar',
+        listener: this._listener,
+        volume: this._volume
         }));
       e10.SetPosition(pos10);
       e10.SetQuaternion(quaternion10);
@@ -520,7 +604,9 @@ class GamePlay {
         e.AddComponent(new counter_entity.ClearCounter({
          entitiesManager: this._entityManager,
          scene: this._scene, 
-         quaternion: quaternion
+         quaternion: quaternion,
+         listener: this._listener,
+         volume: this._volume
        }));
         e.SetPosition(pos);
         e.SetQuaternion(quaternion);
@@ -554,6 +640,9 @@ class GamePlay {
       e1.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
+        listener: this._listener,
+        volume: this._volume
+
       }));
       e1.SetPosition(pos1);
       e1.SetQuaternion(quaternion1);
@@ -587,7 +676,9 @@ class GamePlay {
       e2.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion2
+        quaternion: quaternion2,
+        listener: this._listener,
+        volume: this._volume
       }));
       e2.SetPosition(pos2);
       e2.SetQuaternion(quaternion2);
@@ -621,7 +712,9 @@ class GamePlay {
       e4.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion4
+        quaternion: quaternion4,
+        listener: this._listener,
+        volume: this._volume
       }));
       e4.SetPosition(pos4);
       e4.SetQuaternion(quaternion4);
@@ -654,7 +747,9 @@ class GamePlay {
       e5.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion5
+        quaternion: quaternion5,
+        listener: this._listener,
+        volume: this._volume
       }));
       e5.SetPosition(pos5);
       e5.SetQuaternion(quaternion5);
@@ -686,7 +781,9 @@ class GamePlay {
       e6.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion6
+        quaternion: quaternion6,
+        listener: this._listener,
+        volume: this._volume
       }));
       e6.SetPosition(pos6);
       e6.SetQuaternion(quaternion6);
@@ -718,7 +815,9 @@ class GamePlay {
       e7.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion7
+        quaternion: quaternion7,
+        listener: this._listener,
+        volume: this._volume
       }));
       e7.SetPosition(pos7);
       e7.SetQuaternion(quaternion7);
@@ -751,7 +850,9 @@ class GamePlay {
       e8.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion8
+        quaternion: quaternion8,
+        listener: this._listener,
+        volume: this._volume
       }));
       e8.SetPosition(pos8);
       e8.SetQuaternion(quaternion8);
@@ -783,7 +884,9 @@ class GamePlay {
       e9.AddComponent(new counter_entity.ClearCounter({
         entitiesManager: this._entityManager,
         scene: this._scene, 
-        quaternion: quaternion9
+        quaternion: quaternion9,
+        listener: this._listener,
+        volume: this._volume
       }));
       e9.SetPosition(pos9);
       e9.SetQuaternion(quaternion9);
@@ -825,7 +928,9 @@ class GamePlay {
         pos: pos1,
         quaternion: quaternion1,
         direction: 'up',
-        iconPath: 'Assets/_Assets/Textures/Icons/Bread.png'
+        iconPath: 'Assets/_Assets/Textures/Icons/Bread.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e1.SetPosition(pos1);
       e1.SetQuaternion(quaternion1);
@@ -865,7 +970,9 @@ class GamePlay {
         pos: pos,
         quaternion: quaternion,
         direction: 'up',
-        iconPath: 'Assets/_Assets/Textures/Icons/CheeseBlock.png'
+        iconPath: 'Assets/_Assets/Textures/Icons/CheeseBlock.png',
+        listener: this._listener,
+        volume: this._volume
         }));  
       e.SetPosition(pos);
       e.SetQuaternion(quaternion);
@@ -905,6 +1012,8 @@ class GamePlay {
         quaternion: quaternion2,
         direction: 'down',
         iconPath: 'Assets/_Assets/Textures/Icons/Tomato.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e2.SetPosition(pos2);
       e2.SetQuaternion(quaternion2);
@@ -944,6 +1053,8 @@ class GamePlay {
         quaternion: quaternion3,
         direction: 'down',
         iconPath: 'Assets/_Assets/Textures/Icons/Cabbage.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e3.SetPosition(pos3);
       e3.SetQuaternion(quaternion3);
@@ -983,15 +1094,63 @@ class GamePlay {
         quaternion: quaternion4,
         direction: 'up',
         iconPath: 'Assets/_Assets/Textures/Icons/MeatPattyUncooked.png',
+        listener: this._listener,
+        volume: this._volume
         }));
       e4.SetPosition(pos4);
       e4.SetQuaternion(quaternion4);
       this._entityManager.Add(e4, 'Food counter');
     }
+    _LoadWall() {
+      //setup a plane
+      let loader = new THREE.TextureLoader();
+      let texture = loader.load('Assets/_Assets/Meshes/Textures/Tiles_06_basecolor.jpg');
+      texture.wrapS = THREE.RepeatWrapping; // Cho phép texture lặp lại theo trục S (hoành độ)
+      texture.wrapT = THREE.RepeatWrapping; // Cho phép texture lặp lại theo trục T (tung độ)
+      texture.repeat.set(10, 10); // Lặp lại texture 10 lần theo cả hai trục
+      const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(31.2, 21.3, 10, 10),
+        new THREE.MeshPhongMaterial({
+           map: texture,
+          }))
+      plane.receiveShadow = true;
+      plane.rotation.x = -Math.PI / 2;
+      this._scene.add(plane);
+      // setup 4 wall
+      const wall1 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.75, 14, 21),
+        new THREE.MeshToonMaterial({
+          color: 0xffff5e,
+          fog: true,
+          fogColor: 0x3f7b9d,
+        }));
+      wall1.position.set(13.2 + 2, 0, 2);
+      this._scene.add( wall1);
+      const wall2 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.75, 14, 21),
+        new THREE.MeshToonMaterial({
+          color: 0xffff5e,
+          fog: true,
+          fogColor: 0x3f7b9d,
+        }));
+      wall2.position.set(-13.2 - 2, 0, 2);
+      this._scene.add( wall2);
+      const wall3 = new THREE.Mesh(
+        new THREE.BoxGeometry(30, 14, 0.75),
+        new THREE.MeshToonMaterial({
+          color: 0xffff5e,
+          fog: true,
+          fogColor: 0x3f7b9d,
+        }));
+      wall3.position.set(0, 0, 12);
+      this._scene.add( wall3);
+    }
     _LoadPlayer() {
       const params = {
         camera: this._camera,
         scene: this._scene,
+        listener: this._listener,
+        volume: this._volume
       };
 
       const player = new entity.Entity();
@@ -1009,14 +1168,12 @@ class GamePlay {
       console.log(player);
     this._input = this._entityManager.Get('player').GetComponent('BasicCharacterControllerInput');
     }
-
     _OnWindowResize() {
       this._camera.aspect = window.innerWidth / window.innerHeight;
       this._camera.updateProjectionMatrix();
       this._threejs.setSize(window.innerWidth, window.innerHeight);
     }
     _updateElementsPosition() {
-      console.log('update');
       // Lấy các phần tử progressBar và imageWarning
       var progressBar = document.getElementById('progressBar');
       var progressBar2 = document.getElementById('progressBar2');
@@ -1024,6 +1181,7 @@ class GamePlay {
       var progressBar4 = document.getElementById('progressBar4');
       var imageWarning = document.getElementById('imageWarning');
       var imageWarning2 = document.getElementById('imageWarning2');
+      var imageContainer = document.querySelector('.image-container');
 
       // Lấy kích thước của cửa sổ trình duyệt
       var windowWidth = window.innerWidth;
@@ -1056,7 +1214,13 @@ class GamePlay {
       // Cập nhật vị trí của imageWarning2
       imageWarning2.style.left = (windowWidth * 63) / 100 + 'px';
       imageWarning2.style.top = (windowHeight * 10.5) / 100 + 'px';
-      }
+  
+      // Cập nhật vị trí của imageContainer
+      imageContainer.style.left = (windowWidth * 65) / 100 + 'px';
+      imageContainer.style.top = (windowHeight * 3) / 100 + 'px';
+
+
+    }
     _RAF() {
          requestAnimationFrame((t) => {
           if (this._previousRAF === null) {
@@ -1070,16 +1234,36 @@ class GamePlay {
     }
     _Step(timeElapsed) {
       const timeElapsedS = Math.min(1.0 / 60.0, timeElapsed * 0.001);
-      console.log('loop');
       if (this._input._keys.pause)
       {
         this._isGamePaused = !this._isGamePaused;
         console.log('pause');
         this._input._keys.pause = false;
+        if (this._isGamePaused)
+        {
+          this._gamePause();
+        } else
+        {
+          document.querySelector('.menu-container2').remove();
+          document.querySelector('.pause-menu-background').remove();
+          document.querySelector('.paused-text').remove();
+          this._isGamePaused = false;
+        }
       }
-      if (!this._isGamePaused)
+      if (!this._isGamePaused && !this._isGameOver)
+      { 
         this._entityManager.updateEntities(timeElapsedS);
-        
+        if(this._isGameStarted && !this._isGameOver)
+        {
+          this._timer-=1;
+          this._updateTimer(this._timer/100);
+        }
+      }
+      if (this._timer == 0)
+      {
+        this._gameOver();
+        this._timer = 9000;
+      }
     }
 
 }
