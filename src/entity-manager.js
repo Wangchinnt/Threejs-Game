@@ -63,6 +63,13 @@ export const entity_manager = (() => {
           entity.Update(timeElapsed);
         }
       }
+      Clear() {
+        for (let entity of this._entities) {
+          entity.SetActive(false);
+        }
+        this._entities = [];
+        this._entitiesMap = {};
+      }
     }
   
     return {
