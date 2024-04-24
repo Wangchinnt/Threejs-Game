@@ -23,8 +23,8 @@ export const plate_entity = (() => {
         _loadIcon(path, position){
         const loader = new THREE.TextureLoader();
         const iconTexture = loader.load(path);
-            // Tạo circle mesh cho background trắng
-        const circleRadius = 0.35; // Đường kính lớn hơn plane để bao quanh nó
+
+        const circleRadius = 0.35; 
         const circleGeometry = new THREE.CircleGeometry(circleRadius, 32);
         const circleMaterial = new THREE.MeshBasicMaterial({ 
             color: 0xffffff, // Màu trắng
@@ -32,7 +32,6 @@ export const plate_entity = (() => {
         });
         const circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
         
-        // Tạo plane mesh cho icon
         const planeGeometry = new THREE.PlaneGeometry(0.6, 0.6);
         const planeMaterial = new THREE.MeshBasicMaterial({
             map: iconTexture,
@@ -40,16 +39,12 @@ export const plate_entity = (() => {
             transparent: true,
         });
         const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.position.set(0, 0, -0.02); 
         
-        // Đặt vị trí của icon lên trên circle
-        plane.position.set(0, 0, -0.02); // Đặt ít hơn để icon nổi lên trên background
-        
-        // Tạo Group và thêm cả plane và circle vào đó
         const group = new THREE.Group();
         group.add(circleMesh);
         group.add(plane);
-        
-        // Đặt vị trí của Group
+
         group.position.set(position.x, position.y, position.z);
         group.rotateX(45); 
 
@@ -82,7 +77,6 @@ export const plate_entity = (() => {
         }
 
         AddIngredients(ingredient) {
-            // Tạo một đối tượng ánh xạ tên thành phần với chỉ số trong mảng
             const ingredientIndexMap = {
                 'Bread': 0,
                 'Burned Meat': 1,
@@ -92,14 +86,9 @@ export const plate_entity = (() => {
                 'Cheese slice': 4
             };
             
-            // Kiểm tra xem tên thành phần có nằm trong ánh xạ không
             if ( ingredient!= null && ingredient.GetName() in ingredientIndexMap) {
-                // Lấy chỉ số của thành phần từ ánh xạ
                 const index = ingredientIndexMap[ingredient.GetName()];
-                
-                // Kiểm tra xem ô đó có rỗng không
                 if (!this._children[index]) {
-                    // Nếu ô đó rỗng, gán thành phần vào mảng tại vị trí chỉ số
                     this._children[index] = ingredient;
                     ingredient.SetParent(this._parent);
                     this._displayIcon(ingredient.GetName());

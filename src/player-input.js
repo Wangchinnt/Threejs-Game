@@ -19,7 +19,6 @@ export const player_input = (() => {
             slice: false,
             pause: false,
           };
-          //this._raycaster = new THREE.Raycaster();
           document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
           document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
           

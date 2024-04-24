@@ -10,7 +10,7 @@ export const deliveryManager = (() => {
     _Init(params) {
         this._listOfRecipe = ['Veggie hamburgers', 'Meat hamburgers', 'Full-topping hamburgers', 'Cheese hamburgers', 'Salad'];
         this._recoursePath = 'Assets/_Assets/Textures/Icons/';
-        // Danh sách các iconPath tương ứng
+        // List of icon paths
         this._iconPaths = [
           [this._recoursePath + 'Bread.png', this._recoursePath + 'CabbageSlices.png', this._recoursePath + 'TomatoSlice.png'],
           [this._recoursePath + 'Bread.png', this._recoursePath + 'TomatoSlice.png', this._recoursePath + 'MeatPattyCooked.png'],
@@ -18,7 +18,7 @@ export const deliveryManager = (() => {
           [this._recoursePath + 'Bread.png', this._recoursePath + 'CheeseSlice.png', this._recoursePath + 'MeatPattyCooked.png'],
           [this._recoursePath + 'CabbageSlices.png', this._recoursePath + 'TomatoSlice.png']
         ];
-        // Tạo container wrapper
+        // Make a container wrapper
         this._containerWrapper = document.createElement('div');
         this._containerWrapper.classList.add('menu-container-wrapper');
         this._timer = 0;
@@ -34,17 +34,13 @@ export const deliveryManager = (() => {
 
     }
     _makeRecipe(containerWrapper) {
-
-        // Chọn ngẫu nhiên một thực đơn
         const randomIndex = Math.floor(Math.random() * this._listOfRecipe.length);
         const randomRecipe = this._listOfRecipe[randomIndex];
         const randomIconPaths = this._iconPaths[randomIndex];
 
-        // Tạo và chèn các icon vào container
         const container = document.createElement('div');
         container.classList.add('menu-container');
 
-        // Tạo và chèn tên của recipe vào container
         const recipeName = document.createElement('div');
         recipeName.textContent = randomRecipe;
         container.appendChild(recipeName);
@@ -55,11 +51,7 @@ export const deliveryManager = (() => {
             image.alt = randomRecipe;
             container.appendChild(image);
         });
-
-        // Chèn container vào container wrapper
         containerWrapper.appendChild(container);
-
-        // Chèn container wrapper vào image-table
         const imageTable = document.querySelector('.image-table');
         imageTable.appendChild(containerWrapper);
 

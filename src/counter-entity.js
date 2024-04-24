@@ -50,9 +50,7 @@ export const counter_entity = (() => {
         constructor(params) {
             super();
             this._Init(params);
-           
         }
-    
         _Init(params) {
             this._hasFood = false;
             this._food = null;
@@ -63,14 +61,12 @@ export const counter_entity = (() => {
             this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
             this._audioDrop = 'Assets/_Assets/Sounds/SFX/SFX_object_drop01.wav';
         }
-
         _loadAudio(audioPath, loop, volume) {
             super._loadAudio(audioPath, loop, volume);
         }
-    
         interact(item) {
             this._interact = true;
-            // Thực hiện logic interact
+            // Do interact logic
             if (!this._hasFood && item != null) {
                 this._loadAudio(this._audioDrop, false, this._volume);
                 console.log('Pushed item on the ', this._parent.GetName());
@@ -217,7 +213,6 @@ export const counter_entity = (() => {
                 }));
                 this._entitiesManager.Add(this._food, 'Cheese');
                 this._food.SetActive(true);    
-                //this._food.SetQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
             }
             else if (this._contain == "Bread")
             {
@@ -295,8 +290,7 @@ export const counter_entity = (() => {
             if (pos != null) this._food.SetPosition(pos);
         }
         interact(){
-            // ["chesse", "hamburgers", "tomatoes", "cabbages", "meats", "plates"]
-            // Thực hiện logic interact
+            // Do interact logic
             this._loadAudio(this._audioPickup, false, this._volume);
             let food = this._food;
             this._RotateDoor();
@@ -307,8 +301,7 @@ export const counter_entity = (() => {
             return food;
         }
         
-        Update(timeElapsed) {
-            
+        Update(timeElapsed) {  
         }
 
     }
@@ -450,7 +443,7 @@ export const counter_entity = (() => {
         }
         interact(item, input) {
             this._interact = true;
-            // Thực hiện logic interact
+            // Do interact logic
             if (!input && item != null && item.GetName() != 'Tomato' & item.GetName() != 'Cabbage' & item.GetName() != 'Cheese'){
                 console.log('This is not a item for cutting');
                 if (item.GetName() == 'Plate' && item.GetComponent('PlateEntity').AddIngredients(this._food)) {
@@ -482,11 +475,11 @@ export const counter_entity = (() => {
                 this.showProgressBar();
                 this.updateProgressBar(this._cuttingProcess * this._percentFill);
                 if (this._cuttingProcess == 3){
-                    this._food = this.CutFood();
+                    this._food = this.cutFood();
                     this._cutting = false;
                 }
                 else {
-                    this.CutFoodProcess();
+                    this.cutFoodProcess();
                     this._cutting = true;
                 }
                 if (!this._cutting) {
@@ -538,7 +531,7 @@ export const counter_entity = (() => {
       
            
         }   
-        CutFood(){
+        cutFood(){
             let foodName = this._food.GetName();
             this._food.SetActive(false);
             this._entitiesManager.Remove(this._food);
@@ -561,7 +554,7 @@ export const counter_entity = (() => {
             food.SetActive(true);  
             return food; 
         }
-        CutFoodProcess() {
+        cutFoodProcess() {
         
         if (this._direction == 'up'){
             // set vị trí của dao lên cao
@@ -582,17 +575,12 @@ export const counter_entity = (() => {
         this._Knife.SetQuaternion(combinedQuaternion); 
 
         }
-        //Định nghĩa hàm hiển thị thanh tiến trình
         showProgressBar() {
             this._progressBar.style.visibility = 'visible';
         }
-
-        // Định nghĩa hàm cập nhật phần trăm của thanh tiến trình
         updateProgressBar(percent) {
             this._progressFill.style.width = percent + '%';
         }
-
-        // Định nghĩa hàm ẩn thanh tiến trình
         hideProgressBar() {
             this._progressBar.style.visibility = 'hidden';
         }   
@@ -720,8 +708,8 @@ export const counter_entity = (() => {
                     this._hasFood = false;
                     this._frying = false;
                     this._fryingProcess = 0;
-                    this.hideProgressBar();
-                    this.hideWarning();
+                    this._hideProgressBar();
+                    this._hideWarning();
                 } else console.log('This is not a item for frying');
                 return item;
             } else if (!this._hasFood && item != null ) {
@@ -744,8 +732,8 @@ export const counter_entity = (() => {
                 this._hasFood = false;
                 this._frying = false;
                 this._fryingProcess = 0;
-                this.hideWarning();
-                this.hideProgressBar();
+                this._hideWarning();
+                this._hideProgressBar();
                 return food;
             } else if (this._hasFood && item != null && item.GetName() != 'Plate') {
                 console.log('Clear counter is full');
@@ -761,8 +749,8 @@ export const counter_entity = (() => {
         }
         Update() {  
             if (this._frying) {
-                this.showProgressBar();
-                this.updateProgressBar(this._fryingProcess % 250 * 0.4 );
+                this._showProgressBar();
+                this._updateProgressBar(this._fryingProcess % 250 * 0.4 );
                 this._fryingProcess ++;
                 let modelComponent = this._stove.GetComponent("StaticModelComponent")._target;
                 modelComponent.traverse(c => {
@@ -847,7 +835,7 @@ export const counter_entity = (() => {
             }
             if (this._fryingProcess == 300) {
                 this._sound2 = this._loadAudio(this._audioWarning, true, this._volume,);
-                this.showWarning();
+                this._showWarning();
             }
             if (this._fryingProcess == 500 ){
                 if (this._fryingFood != null && this._burnedFood != null) {
@@ -860,29 +848,23 @@ export const counter_entity = (() => {
                 this._frying = false;
                 this._sound.stop();
                 this._sound2.stop();
-                this.hideProgressBar();
-                this.hideWarning();
+                this._hideProgressBar();
+                this._hideWarning();
             }
         }
-
-        //Định nghĩa hàm hiển thị thanh tiến trình
-        showProgressBar() {
+        _showProgressBar() {
             this._progressBar.style.visibility = 'visible';
         }
-
-        // Định nghĩa hàm cập nhật phần trăm của thanh tiến trình
-        updateProgressBar(percent) {
+        _updateProgressBar(percent) {
             this._progressFill.style.width = percent + '%';
         }
-
-        // Định nghĩa hàm ẩn thanh tiến trình
-        hideProgressBar() {
+        _hideProgressBar() {
             this._progressBar.style.visibility = 'hidden';
         } 
-        showWarning() {
+        _showWarning() {
             this._warning.style.visibility = 'visible';
         }
-        hideWarning() {
+        _hideWarning() {
             this._warning.style.visibility = 'hidden';
         }
     }
@@ -891,7 +873,6 @@ export const counter_entity = (() => {
             super();
             this._Init(params);
         }
-
         _Init(params) {
             // Init method if needed
             this._scene = params.scene;
@@ -932,10 +913,38 @@ export const counter_entity = (() => {
             scene.add(plane);
             return plane;
         }
+        _animateIcon(timeElapsed) {
+            // Di chuyển icon mũi tên
+            this._icon.position.x -= this._iconSpeed * timeElapsed;
+            this._icon2.position.x -= this._iconSpeed * timeElapsed;
+            
+            // Kiểm tra nếu icon mũi tên vượt qua ngưỡng trên trục X
+            if (this._icon.position.x <= this._maxX + 1.55) {
+                this._icon.material.opacity -= this._iconSpeed * timeElapsed;
+            } else this._icon.material.opacity += this._iconSpeed * timeElapsed;
+            if (this._icon2.position.x <= this._maxX + 1.55) {
+                // Giảm dần opacity của icon mũi tên
+                this._icon2.material.opacity -= this._iconSpeed * timeElapsed;
+            }  else this._icon2.material.opacity += this._iconSpeed * timeElapsed;
+
+            // Kiểm tra nếu icon mũi tên đến gần giới hạn bên phải
+            if (this._icon.position.x <= this._maxX) {
+                // Đặt vị trí của icon mũi tên về lại giới hạn bên trái
+                this._icon.position.x = this._minX;
+                // Đặt lại opacity về 0
+                this._icon.material.opacity = 0;
+            }
+            if (this._icon2.position.x <= this._maxX) {
+                // Đặt vị trí của icon mũi tên về lại giới hạn bên trái
+                this._icon2.position.x = this._minX;
+                // Đặt lại opacity về 0
+                this._icon2.material.opacity = 0;
+            }
+     }
         interact(item) {
             let plate = item;
             console.log(plate);
-            // Thực hiện logic interact
+            // Do interact logic
             let listOfRecipeSpawned = this._parent.GetComponent('DeliveryManager').getListOfRecipeNameSpawned();
             let nameOfRecipe = null;
             for (let i = 0; i < listOfRecipeSpawned.length; i++) {
@@ -967,35 +976,6 @@ export const counter_entity = (() => {
         }
         Update(timeElapsed) {  
             this._animateIcon(timeElapsed);
-        }
-        
-        _animateIcon(timeElapsed) {
-               // Di chuyển icon mũi tên
-               this._icon.position.x -= this._iconSpeed * timeElapsed;
-               this._icon2.position.x -= this._iconSpeed * timeElapsed;
-               
-               // Kiểm tra nếu icon mũi tên vượt qua ngưỡng trên trục X
-               if (this._icon.position.x <= this._maxX + 1.55) {
-                   this._icon.material.opacity -= this._iconSpeed * timeElapsed;
-               } else this._icon.material.opacity += this._iconSpeed * timeElapsed;
-               if (this._icon2.position.x <= this._maxX + 1.55) {
-                   // Giảm dần opacity của icon mũi tên
-                   this._icon2.material.opacity -= this._iconSpeed * timeElapsed;
-               }  else this._icon2.material.opacity += this._iconSpeed * timeElapsed;
-   
-               // Kiểm tra nếu icon mũi tên đến gần giới hạn bên phải
-               if (this._icon.position.x <= this._maxX) {
-                   // Đặt vị trí của icon mũi tên về lại giới hạn bên trái
-                   this._icon.position.x = this._minX;
-                   // Đặt lại opacity về 0
-                   this._icon.material.opacity = 0;
-               }
-               if (this._icon2.position.x <= this._maxX) {
-                   // Đặt vị trí của icon mũi tên về lại giới hạn bên trái
-                   this._icon2.position.x = this._minX;
-                   // Đặt lại opacity về 0
-                   this._icon2.material.opacity = 0;
-               }
         }
         getScore() {
             return this._score;

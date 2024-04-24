@@ -11,48 +11,42 @@ import { deliveryManager } from './deliveryManager-component.js';
 
 class GameMenu {
   constructor() {
-    this.menuItems = ['Multiplayer', 'Singleplayer', 'Option'];
+    this.menuItems = ['Multiplayer', 'Singleplayer', 'Options'];
     this.selectedItemIndex = 0;
     this.render();
     this.addEventListeners();
   }
 
   render() {
-    // Tạo một phần tử div cho menu container
     const menuContainer = document.createElement('div');
-    menuContainer.classList.add('menu-container1'); // Thêm lớp 'menu-container1' cho phần tử menu
+    menuContainer.classList.add('menu-container1'); 
 
-    // Tạo các phần tử menu item từ danh sách menuItems
+
     this.menuItems.forEach((item, index) => {
-      const menuItem = document.createElement('div'); // Tạo một phần tử div cho mỗi menu item
-      menuItem.textContent = item; // Thiết lập nội dung của menu item là văn bản của mục trong danh sách menuItems
-      menuItem.classList.add('menu-item'); // Thêm lớp 'menu-item' cho phần tử menu item
+      const menuItem = document.createElement('div'); 
+      menuItem.textContent = item; 
+      menuItem.classList.add('menu-item'); 
 
-      // Nếu mục hiện tại được lặp lại có index bằng với index của mục đang được chọn, thêm lớp 'selected'
       if (index === this.selectedItemIndex) {
         menuItem.classList.add('selected');
       }
 
-      // Thêm sự kiện click cho mỗi menu item
       menuItem.addEventListener('click', () => {
         this.selectedItemIndex = index;
         this.updateMenu();
         this.handleSelection();
       });
 
-      menuContainer.appendChild(menuItem); // Thêm phần tử menu item vào trong phần tử menu container
-    });
+      menuContainer.appendChild(menuItem); 
 
-    // Thêm phần tử menu container vào body của trang web
     document.body.appendChild(menuContainer);
 
-    // Tạo một phần tử img cho hình nền
     const backgroundImage = document.createElement('img');
-    backgroundImage.src = 'Assets/_Assets/Textures/Menu background.jpg'; // Thay đổi 'path/to/your/image.jpg' thành đường dẫn thực tế của hình ảnh bạn muốn sử dụng
-    backgroundImage.classList.add('menu-background'); // Thêm lớp 'menu-background' cho phần tử hình nền
+    backgroundImage.src = 'Assets/_Assets/Textures/Menu background_reduced.jpg';
+    backgroundImage.classList.add('menu-background');
 
-    // Thêm phần tử hình nền vào body của trang web
     document.body.appendChild(backgroundImage);
+  })
   }
 
   addEventListeners() {
@@ -101,7 +95,7 @@ class GameMenu {
        document.querySelector('.menu-background').remove();
        _APP = null;
        _APP = new GamePlay();
-    } else if (selectedItem === 'Option') {
+    } else if (selectedItem === 'Options') {
       // Code to exit the game
 
     }
@@ -230,78 +224,66 @@ class GamePlay {
       this._isGameOver = true;
       this._isGameStarted = false;
       this._isGamePaused = false;
-       // Tạo một phần tử div cho background của menu tạm dừng
-       const gameOverBackground = document.createElement('div');
-       gameOverBackground.classList.add('gameOver-background'); // Thêm lớp 'pause-menu-background' cho phần tử background
- 
-       // Thêm phần tử background vào body của trang web
-       document.body.appendChild(gameOverBackground);
-      // Tạo một phần tử div cho chữ "Paused"
+  
+      const gameOverBackground = document.createElement('div');
+      gameOverBackground.classList.add('gameOver-background'); 
+      document.body.appendChild(gameOverBackground);
+
       const gameText = document.createElement('div');
-      gameText.textContent = 'Game Over'; // Thiết lập nội dung là 'Paused'
-      gameText.classList.add('gameOver-text'); // Thêm lớp 'paused-text'
+      gameText.textContent = 'Game Over'; 
+      gameText.classList.add('gameOver-text');
       document.body.appendChild(gameText);
+
       const scoreText = document.createElement('div');
-      scoreText.textContent = 'Delivered orders: ' + this._entityManager.Get('Delivery counter').GetComponent('DeliveryCounter').getScore(); // Thiết lập nội dung là 'Paused'
-      scoreText.classList.add('score-text'); // Thêm lớp 'paused-text'
+      scoreText.textContent = 'Delivered orders: ' + this._entityManager.Get('Delivery counter').GetComponent('DeliveryCounter').getScore();
+      scoreText.classList.add('score-text'); 
       document.body.appendChild(scoreText);
     }
     _gamePause(){
 
-      // Tạo một phần tử div cho background của menu tạm dừng
       const pauseMenuBackground = document.createElement('div');
-      pauseMenuBackground.classList.add('pause-menu-background'); // Thêm lớp 'pause-menu-background' cho phần tử background
-
-      // Thêm phần tử background vào body của trang web
+      pauseMenuBackground.classList.add('pause-menu-background');
       document.body.appendChild(pauseMenuBackground);
-      // Tạo một phần tử div cho menu container
+
+
       const menuContainer = document.createElement('div');
-      menuContainer.classList.add('menu-container2'); // Thêm lớp 'menu-container2' cho phần tử menu
+      menuContainer.classList.add('menu-container2');
 
-      // Tạo một phần tử div cho chữ "Paused"
       const pausedText = document.createElement('div');
-      pausedText.textContent = 'Paused'; // Thiết lập nội dung là 'Paused'
-      pausedText.classList.add('paused-text'); // Thêm lớp 'paused-text'
+      pausedText.textContent = 'Paused';
+      pausedText.classList.add('paused-text');
 
-      // Thêm phần tử chữ "Paused" vào phần tử menu container
       document.body.appendChild(pausedText);
 
-      // Tạo các phần tử menu item từ danh sách menuItems
       const menuItems = ['Resume', 'Options'];
       menuItems.forEach((item, index) => {
-        const menuItem = document.createElement('div'); // Tạo một phần tử div cho mỗi menu item
-        menuItem.textContent = item; // Thiết lập nội dung của menu item là văn bản của mục trong danh sách menuItems
-        menuItem.classList.add('menu-item'); // Thêm lớp 'menu-item' cho phần tử menu item
+      const menuItem = document.createElement('div'); 
+      menuItem.textContent = item; 
+      menuItem.classList.add('menu-item'); 
 
-        // Nếu mục hiện tại được lặp lại có index bằng với index của mục đang được chọn, thêm lớp 'selected'
-        if (index === this.selectedItemIndex) {
-          menuItem.classList.add('selected');
+      if (index === this.selectedItemIndex) {
+        menuItem.classList.add('selected');
+      }
+
+      menuItem.addEventListener('click', () => {
+        switch (index) {
+          case 0: // Resume
+            console.log('Resume clicked');
+            document.querySelector('.menu-container2').remove();
+            document.querySelector('.pause-menu-background').remove();
+            document.querySelector('.paused-text').remove();
+            this._isGamePaused = false;
+            break;
+          case 1: // Options
+            console.log('Options clicked');
+            break;
+          default:
+            break;
         }
-
-        // Thêm sự kiện click cho mỗi menu item
-        menuItem.addEventListener('click', () => {
-          switch (index) {
-            case 0: // Resume
-              // Thực hiện hành động để tiếp tục trò chơi
-              console.log('Resume clicked');
-              document.querySelector('.menu-container2').remove();
-              document.querySelector('.pause-menu-background').remove();
-              document.querySelector('.paused-text').remove();
-              this._isGamePaused = false;
-              break;
-            case 1: // Options
-              // Hiển thị cài đặt hoặc tùy chọn trò chơi
-              console.log('Options clicked');
-              break;
-            default:
-              break;
-          }
-        });
-
-      menuContainer.appendChild(menuItem); // Thêm phần tử menu item vào trong phần tử menu container
+      });
+      menuContainer.appendChild(menuItem);
       });
 
-      // Thêm phần tử menu container vào body của trang web
       document.body.appendChild(menuContainer);
     }
     _LoadMAP() {
@@ -1174,7 +1156,7 @@ class GamePlay {
       this._threejs.setSize(window.innerWidth, window.innerHeight);
     }
     _updateElementsPosition() {
-      // Lấy các phần tử progressBar và imageWarning
+      // Get elements
       var progressBar = document.getElementById('progressBar');
       var progressBar2 = document.getElementById('progressBar2');
       var progressBar3 = document.getElementById('progressBar3');
@@ -1183,43 +1165,34 @@ class GamePlay {
       var imageWarning2 = document.getElementById('imageWarning2');
       var imageContainer = document.querySelector('.image-container');
 
-      // Lấy kích thước của cửa sổ trình duyệt
+      // Get size of window
       var windowWidth = window.innerWidth;
       var windowHeight = window.innerHeight;
-
-      // Cập nhật vị trí và kích thước của progressBar
+      // progressBar
       progressBar.style.left = (windowWidth * 69) / 100 + 'px';
       progressBar.style.top = (windowHeight * 75.5) / 100 + 'px';
-      progressBar.style.width = (windowWidth * 130) / 1920 + 'px'; // 1920 là độ rộng ban đầu của cửa sổ
-
-      // Cập nhật vị trí và kích thước của progressBar2
+      progressBar.style.width = (windowWidth * 130) / 1920 + 'px';
+      // progressBar2
       progressBar2.style.left = (windowWidth * 54.8) / 100 + 'px';
       progressBar2.style.top = (windowHeight * 15.5) / 100 + 'px';
       progressBar2.style.width = (windowWidth * 98) / 1920 + 'px';
-
-      // Cập nhật vị trí và kích thước của progressBar3
+      // progressBar3
       progressBar3.style.left = (windowWidth * 61.5) / 100 + 'px';
       progressBar3.style.top = (windowHeight * 15.5) / 100 + 'px';
       progressBar3.style.width = (windowWidth * 98) / 1920 + 'px';
-
-      // Cập nhật vị trí và kích thước của progressBar4
+      // progressBar4
       progressBar4.style.left = (windowWidth * 83.5) / 100 + 'px';
       progressBar4.style.top = (windowHeight * 46) / 100 + 'px';
       progressBar4.style.width = (windowWidth * 125) / 1920 + 'px';
-
-      // Cập nhật vị trí của imageWarning
+      // imageWarning
       imageWarning.style.left = (windowWidth * 85.5) / 100 + 'px';
       imageWarning.style.top = (windowHeight * 41) / 100 + 'px';
-
-      // Cập nhật vị trí của imageWarning2
+      // imageWarning2
       imageWarning2.style.left = (windowWidth * 63) / 100 + 'px';
       imageWarning2.style.top = (windowHeight * 10.5) / 100 + 'px';
-  
-      // Cập nhật vị trí của imageContainer
+      // imageContainer
       imageContainer.style.left = (windowWidth * 65) / 100 + 'px';
       imageContainer.style.top = (windowHeight * 3) / 100 + 'px';
-
-
     }
     _RAF() {
          requestAnimationFrame((t) => {
@@ -1265,7 +1238,6 @@ class GamePlay {
         this._timer = 9000;
       }
     }
-
 }
 let _APP = null;
 

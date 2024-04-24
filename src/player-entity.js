@@ -63,8 +63,6 @@ export const player_entity = (() => {
             this._audioFootstep1 = 'Assets/_Assets/Sounds/SFX/SFX_footstep02_01.wav';
             this._audioFootstep2 = 'Assets/_Assets/Sounds/SFX/SFX_footstep02_02.wav';
             this._LoadModels();
-
-            //this._RegisterHandler('update', (m) => { this._Update(m); }); // update the character
         }
         // load the models of player
         _LoadModels() {
@@ -155,8 +153,6 @@ export const player_entity = (() => {
             const rotationSpeed = 6.0;
             const controlObject = this._target;
             const rotationVector = new THREE.Vector3(0, 1, 0);
-            
-            // Xác định hướng di chuyển dựa trên phím được nhấn
             if (input._keys.forward) {
                 this.rotationQuaternion.setFromAxisAngle(rotationVector, 0);
                 inputVector.y = 1;
@@ -201,20 +197,13 @@ export const player_entity = (() => {
             if (inputVector.length() > 0) {
                 this._selectedCounter = this.CheckSelectionCollision();
             }
-            
-        
-            // Xác định vị trí tiếp theo dựa trên hướng di chuyển và tốc độ
             const nextPosition = this._parent.GetPosition().clone();
-            
-            // Kiểm tra va chạm trước khi cập nhật vị trí
             if (this.CheckMovementCollision(this._direction.clone().multiplyScalar(timeInSeconds * this._speed))) 
                 nextPosition.addScaledVector(this._direction, timeInSeconds * this._speed);
 
             if (this._direction.length() > 0) {
                     this._lastDirection = this._direction.clone();
             }
-            
-            // Cập nhật vị trí và hướng quay của đối tượng điều khiển
             this._quaternion = this.rotationQuaternion.clone();
             controlObject.quaternion.slerp(this._quaternion, rotationSpeed * timeInSeconds);
             if (this._quaternion.length() > 0) {
@@ -223,8 +212,6 @@ export const player_entity = (() => {
             controlObject.position.copy(nextPosition);
             this._parent.SetPosition(nextPosition);
             this._parent.SetQuaternion(controlObject.quaternion);
-            
-            // Xử lý hành động của người chơi
             if ((input._keys.interact) && this._selectedCounter != null) {
                 let counter = this._selectedCounter.GetName();
                 if (counter.startsWith('Clear')) {
@@ -271,23 +258,20 @@ export const player_entity = (() => {
             let manager = this._parent._parent;
             let entities = manager.GetEntities();
             let p = this._parent.GetComponent('BoxColliderComponent').GetBoundingBox();
-        
-            // Các hướng để kiểm tra va chạm
-            let collisionDetected = false;
             const direction = this._direction.clone().normalize();
         
-            // Tạo ra một mảng chứa các giá trị khoảng cách từ 0.5 đến 2
-            const distances = Array.from({ length: 14 }, (_, i) => 0 + i * 0.25); // Ví dụ: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+            // Make an array of distances to check for collisions
+            const distances = Array.from({ length: 14 }, (_, i) => 0 + i * 0.25); // eg:[0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
         
             for (let distance of distances) {
                 let nextBoundingBox = p.clone();
                 let center = new THREE.Vector3();
                 p.getCenter(center);
                 nextBoundingBox.setFromCenterAndSize(center, new THREE.Vector3(0.15, 0.15, 0.15));
-                nextBoundingBox.translate(direction.clone().multiplyScalar(distance)); // Dịch chuyển hộp va chạm theo hướng và khoảng cách
-                // Kiểm tra va chạm với mỗi entity
+                nextBoundingBox.translate(direction.clone().multiplyScalar(distance)); 
+                // Check for collisions with other entities
                 for (let entity of entities) {
-                    if (entity !== this._parent) { // Đảm bảo không kiểm tra va chạm với chính đối tượng đang xét
+                    if (entity !== this._parent) {
                         let entityBoxCollider = entity.GetComponent('BoxColliderComponent');
                         if (entityBoxCollider) {
                             let entityBoundingBox = entityBoxCollider.GetBoundingBox();
@@ -301,11 +285,10 @@ export const player_entity = (() => {
                                             const materials = Array.isArray(c.material) ? c.material : [c.material];
                                             materials.forEach(material => {
                                                 if (material && material.emissive) {
-                                                    // Thiết lập màu trắng nhạt như ghost
+                                                    // Set emissive color to white
                                                     material.emissive.set(0xffffff);
                                                     material.emissiveIntensity = 0.05;
                                                 } else {
-                                                    // Nếu vật liệu không có thuộc tính emissive, hiển thị thông báo lỗi
                                                     console.log("Material or emissive property is undefined.");
                                                 }
                                             });
@@ -314,17 +297,14 @@ export const player_entity = (() => {
                                     return entity;
                                 }
                             } else {
-                                // Nếu không có va chạm nữa, thiết lập màu sắc về mặc định
                                 let modelComponent = entity.GetComponent("StaticModelComponent")._target;
                                 modelComponent.traverse(c => {
                                     if (c.isMesh) {
                                         const materials = Array.isArray(c.material) ? c.material : [c.material];
                                         materials.forEach(material => {
                                             if (material && material.emissive) {
-                                                // Thiết lập màu sắc về mặc định
                                                 material.emissive.set(0x000000);
                                             } else {
-                                                // Nếu vật liệu không có thuộc tính emissive, hiển thị thông báo lỗi
                                                 console.log("Material or emissive property is undefined.");
                                             }
                                         });
@@ -342,11 +322,11 @@ export const player_entity = (() => {
             let manager = this._parent._parent;
             let entities = manager.GetEntities();
             let p = this._parent.GetComponent('BoxColliderComponent').GetBoundingBox();
-            // Tạo một hộp va chạm tương ứng với vị trí tiếp theo
+            // Make a copy of the player's bounding box and translate it to the next position
             let nextBoundingBox = p.clone();
             nextBoundingBox.translate(steps);
             for (let entity of entities) {
-                if (entity !== this._parent) { // Đảm bảo không kiểm tra va chạm với chính đối tượng đang xét
+                if (entity !== this._parent) { // Check if the entity is not the player
                     let entityBoxCollider = entity.GetComponent('BoxColliderComponent');
                     if (entityBoxCollider) {
                         let entityBoundingBox = entityBoxCollider.GetBoundingBox();
@@ -357,7 +337,7 @@ export const player_entity = (() => {
                     }
                 }
             }
-            return true; // Trả về true nếu không gặp va chạm
+            return true; // No collision detected
         }
     
 };
