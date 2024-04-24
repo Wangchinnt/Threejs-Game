@@ -89,8 +89,8 @@
 }
 .image-container {
   position: fixed;
-  top: auto;
-  left: 75%;
+  top: 3%;
+  left: 65%;
   width: fit-content;
   height: fit-content;
   display: flex;
@@ -118,6 +118,50 @@
   margin-right: 10px;
   width: 70px;
   height: 70px;
+}
+.imageLoading{
+  width: 100%; /* Đặt chiều rộng của hình ảnh là 100% của phần tử cha */
+  height: 100%; /* Đặt chiều cao của hình ảnh là 100% của phần tử cha */
+  position: fixed; /* Đặt vị trí của hình ảnh là cố định */
+  top: 0; /* Đặt vị trí top của hình ảnh là 0 */
+  left: 0; /* Đặt vị trí left của hình ảnh là 0 */
+  visibility: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.countdown {
+  position: relative;
+}
+
+.background {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; 
+  height: 100px; 
+  background-color: #000; 
+  border-radius: 10px; 
+  border: 5px solid #fff; 
+  opacity: 0.5; 
+  visibility: hidden; 
+}
+
+.time {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-family: Arial, sans-serif;
+  color: white;
 }
 
 .menu-container-wrapper {
@@ -154,17 +198,6 @@
   align-items: flex-start;
 }
 
-.menu-container1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #f0f0f0;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
 .menu-item {
   font-size: 20px;
   padding: 10px;
@@ -182,8 +215,7 @@
 }.menu-container1 {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 70%;
   background-color: #f0f0f0;
   padding: 20px;
   border-radius: 5px;
@@ -191,7 +223,7 @@
 }
 
 .menu-item {
-  font-size: 20px;
+  font-size: 30px;
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -207,9 +239,9 @@
 }
 .menu-container1 {
   position: absolute;
-  top: 60%;
-  left: 30%;
-  width: 30%;
+  top: 45%;
+  left: 70%;
+  width: 20%;
   height: auto;
   transform: translate(-50%, -50%);
   padding: 20px;
@@ -225,6 +257,87 @@
   z-index: -1; /* Đặt z-index của hình ảnh là thấp hơn so với phần tử menu container, để hình ảnh hiển thị phía sau */
   /* Bất kỳ quy tắc CSS nào khác bạn muốn áp dụng cho hình ảnh */
 }
+.menu-container2 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; /* Đặt chiều rộng tùy ý */
+  height: auto; /* Đặt chiều cao tùy ý */
+  background-color: black;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
+}
+
+.menu-container2 .menu-item {
+  color: white;
+  font-size: 30px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-align: center; /* Canh giữa văn bản trong mỗi menu item */
+}
+
+.menu-container2 .menu-item:hover {
+  background-color: green;
+}
+
+.pause-menu-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.8;
+
+}
+.paused-text {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  font-family: 'Courier New', Courier, monospace;
+  color: yellow;
+  text-align: center;
+  animation: blink 1.2s infinite; /* Áp dụng animation blink với thời gian 1.5s và lặp vô hạn */
+}
+
+.gameOver-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.5;
+}
+.gameOver-text {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  color: red;
+  text-align: center;
+}
+.score-text{
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+}
+
+
 @keyframes blink {
   0% {
     opacity: 0.2;
@@ -236,6 +349,7 @@
     opacity: 0.2;
   }
 }
+
 
 @keyframes hideImage {
   100% {
