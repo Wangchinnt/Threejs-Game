@@ -8,7 +8,9 @@ export const counter_entity = (() => {
         constructor() {
             super();
         }
-    
+        
+        _Init(params) {
+        }
         interact(item) {
             // Override this method in child classes
         }
@@ -29,6 +31,17 @@ export const counter_entity = (() => {
             scene.add(plane);
             return plane;
         }
+        _loadAudio(audioPath, loop, volume)
+        {
+            const sound = new THREE.Audio(this._listener);
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load(audioPath, function(buffer) {
+              sound.setBuffer(buffer);
+              sound.setLoop(loop);
+              sound.setVolume(volume);
+              sound.play();
+            });
+        }
         Update(timeElapsed) { 
 
         }
@@ -45,18 +58,28 @@ export const counter_entity = (() => {
             this._food = null;
             this._interact = false;
             this._quaternion = params.quaternion;
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
+            this._audioDrop = 'Assets/_Assets/Sounds/SFX/SFX_object_drop01.wav';
+        }
+
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
         }
     
         interact(item) {
             this._interact = true;
             // Thực hiện logic interact
             if (!this._hasFood && item != null) {
+                this._loadAudio(this._audioDrop, false, this._volume);
                 console.log('Pushed item on the ', this._parent.GetName());
                 this._food = item;
                 this._hasFood = true;
                 console.log('Clear counter is full');
                 return null;
             } else if (this._hasFood && item == null) {
+                this._loadAudio(this._audioPickup, false, this._volume);
                 console.log('Take the food from the ' , this._parent.GetName());
                 let food = this._food;
                 this._food = null;
@@ -70,12 +93,14 @@ export const counter_entity = (() => {
             else if(this._hasFood && this._food.GetName() == 'Plate' && item != null) {
                 console.log('there is a plate on the counter');
                 if (this._food.GetComponent('PlateEntity').AddIngredients(item)) {
+                    this._loadAudio(this._audioDrop, false, this._volume);
                     return null;
                 }
                 return item;
             }
             else if(this._hasFood && this._food.GetName() != 'Plate' && item != null && item.GetName() == 'Plate') {
                 if (item.GetComponent('PlateEntity').AddIngredients(this._food)) {
+                    this._loadAudio(this._audioDrop, false, this._volume);
                     console.log('Push food from the counter on the plate ');
                     this._food = null;
                     this._hasFood = false;
@@ -111,15 +136,22 @@ export const counter_entity = (() => {
             this._pos = params.pos;
             this._quaternion = params.quaternion;
             this._direction = params.direction;
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
             this._icon = this._loadIcon(params.iconPath, this._scene, this._pos.clone().add(new THREE.Vector3(0, 3, 0)), 1);
             this._door = this._loadDoor(this._quaternion, this._direction);
             this._SpawnFood(this._pos.clone().add(new THREE.Vector3(0, 1.5, 0)));
+
         }
         _loadIcon(iconPath, scene, pos, scale) {
             if (this._direction == 'up'){
                 return super._loadIcon(iconPath, scene, pos, scale, Math.PI / 2);
             } 
             return super._loadIcon(iconPath, scene, pos, scale, -Math.PI / 2); 
+        }
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
         }
         _loadDoor(quaternion, direction) {
             const e = new entity.Entity();
@@ -265,6 +297,7 @@ export const counter_entity = (() => {
         interact(){
             // ["chesse", "hamburgers", "tomatoes", "cabbages", "meats", "plates"]
             // Thực hiện logic interact
+            this._loadAudio(this._audioPickup, false, this._volume);
             let food = this._food;
             this._RotateDoor();
             setTimeout(() => {
@@ -291,9 +324,15 @@ export const counter_entity = (() => {
             this._pos = params.pos;
             this._icon = this._loadIcon(params.iconPath, this._scene, this._pos.clone().add(new THREE.Vector3(0, 3, 0)), 1);
             this._plates = [];
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
         }
         _loadIcon(iconPath, scene, pos, scale, rotation) {
             return super._loadIcon(iconPath, scene, pos, scale, rotation);
+        }
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
         }
         _SpawnPlate(pos) {
             let plate = new entity.Entity();
@@ -319,6 +358,7 @@ export const counter_entity = (() => {
             this._plates.push(plate);
         }
         interact() {
+            this._loadAudio(this._audioPickup, false, this._volume);
             let plate = this._plates.at(-1);
             this._plates.pop();
             return plate;
@@ -371,7 +411,6 @@ export const counter_entity = (() => {
             } else {
                 this._choppingBoard.SetQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), - Math.PI));
             }
-
             this._Knife = new entity.Entity();
             this._Knife.AddComponent(new gltf_component.StaticModelComponent({
                 scene: this._scene,
@@ -389,7 +428,11 @@ export const counter_entity = (() => {
             this._Knife.SetActive(true);
             this._resetKnife();
             this._Knife.SetParent(this);   
-            
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
+            this._audioDrop = 'Assets/_Assets/Sounds/SFX/SFX_object_drop01.wav';
+            this._audioChop = 'Assets/_Assets/Sounds/SFX/SFX_chop01.wav';
         }
         _resetKnife() {
             if (this._direction == 'up') {
@@ -402,24 +445,30 @@ export const counter_entity = (() => {
         
             this._cuttingProcess = 0;
         }
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
+        }
         interact(item, input) {
             this._interact = true;
             // Thực hiện logic interact
             if (!input && item != null && item.GetName() != 'Tomato' & item.GetName() != 'Cabbage' & item.GetName() != 'Cheese'){
                 console.log('This is not a item for cutting');
                 if (item.GetName() == 'Plate' && item.GetComponent('PlateEntity').AddIngredients(this._food)) {
+                    this._loadAudio(this._audioPickup, false, this._volume);
                     console.log('Push food from the counter on the plate ');
                     this._food = null;
                     this._hasFood = false;
                 } 
                 return item;
             } else if (!this._hasFood && item != null && !input) {
+                this._loadAudio(this._audioDrop, false, this._volume);
                 console.log('Pushed item on the ', this._parent.GetName());
                 this._food = item;
                 this._hasFood = true;
                 this._cutting = false;
                 return null;
             } else if (this._hasFood && item == null && !input) {
+                this._loadAudio(this._audioPickup, false, this._volume);
                 console.log('Take the food from the ' , this._parent.GetName());
                 let food = this._food;
                 this._food = null;
@@ -428,6 +477,7 @@ export const counter_entity = (() => {
                 this.hideProgressBar();
                 return food;
             } else if (this._hasFood && input && item == null && this._food.GetName() != 'Tomato slice' & this._food.GetName() != 'Cabbage slice' & this._food.GetName() != 'Cheese slice') { 
+                this._loadAudio(this._audioChop, false, this._volume);
                 this._cuttingProcess += 1;
                 this.showProgressBar();
                 this.updateProgressBar(this._cuttingProcess * this._percentFill);
@@ -558,9 +608,17 @@ export const counter_entity = (() => {
             this._scene = params.scene;
             this._entitiesManager = params.entitiesManager;
             this._food = null;
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioTrash = 'Assets/_Assets/Sounds/SFX/SFX_trash02.wav';
+            
+        }
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
         }
         interact(item) {
             // Thực hiện logic interact
+            this._loadAudio(this._audioTrash, false, this._volume);
             console.log('Throw the food to the trash');
             if (item.GetName() == 'Plate') {
                 item.GetComponent('PlateEntity').ClearPlate();
@@ -578,9 +636,15 @@ export const counter_entity = (() => {
         _Init(params) {
             this._scene = params.scene;
             this._entitiesManager = params.entitiesManager;
-            this._food = null;
             this._pos = params.pos;
             this._quaternion = params.quaternion;
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._audioPickup ='Assets/_Assets/Sounds/SFX/SFX_object_pickup01.wav';
+            this._audioDrop = 'Assets/_Assets/Sounds/SFX/SFX_object_drop01.wav';
+            this._audioWarning = 'Assets/_Assets/Sounds/SFX/SFX_warning01.wav';
+            this._audioFrying = 'Assets/_Assets/Sounds/SFX/SFX_pan_sizzle_loop.wav';
+            this._food = null;
             this._frying = false;
             this._fryingProcess = 0;
             this._fryingFood = null;
@@ -589,6 +653,8 @@ export const counter_entity = (() => {
             this._progressFill = document.getElementById(params.progressBarName+'Fill');
             this._percentFill = 0.2;
             this._warning = document.getElementById(params.warning);
+            this._sound = null;
+            this._sound2 = null;
             this._stove = new entity.Entity();
             this._stove.AddComponent(new gltf_component.StaticModelComponent({
                 scene: this._scene,
@@ -627,10 +693,28 @@ export const counter_entity = (() => {
             this._pan.SetPosition(new THREE.Vector3(this._pos.x, 3.1, this._pos.z));
             this._pan.SetQuaternion(this._quaternion.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 9)));
         }
+        _loadAudio(audioPath, loop, volume, duration) {
+            const sound = new THREE.Audio(this._listener);
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load(audioPath, function(buffer) {
+              sound.setBuffer(buffer);
+              sound.setLoop(loop);
+              sound.setVolume(volume);
+              sound.play();
+              if(duration != null) {
+                setTimeout(() => {
+                    sound.stop();
+                  }, duration * 1000);
+              }
+            });
+            return sound;
+        }
         interact(item) {
             // Thực hiện logic interact
             if (item != null && item.GetName() != 'Meat'){
                 if (item.GetName() == 'Plate' && item.GetComponent('PlateEntity').AddIngredients(this._food)) {
+                    if (this._sound != null) this._sound.stop();
+                    if (this._sound2 != null) this._sound2.stop();
                     console.log('Push food from the counter on the plate ');
                     this._food = null;
                     this._hasFood = false;
@@ -641,14 +725,19 @@ export const counter_entity = (() => {
                 } else console.log('This is not a item for frying');
                 return item;
             } else if (!this._hasFood && item != null ) {
+                this._loadAudio(this._audioDrop, false, this._volume);
                 console.log('Pushed item on the ', this._parent.GetName());
                 this._food = item;
                 this._food.SetPosition(new THREE.Vector3(this._pos.x, 3.2, this._pos.z));
                 this._hasFood = true;
+                this._sound = this._loadAudio(this._audioFrying, true, this._volume);
                 this._frying = true;
                 console.log('Frying');
                 return null;
             } else if (this._hasFood && item == null) {
+                if (this._sound != null) this._sound.stop();
+                if (this._sound2 != null) this._sound2.stop();
+                this._loadAudio(this._audioPickup, false, this._volume);
                 console.log('Take the food from the ' , this._parent.GetName());
                 let food = this._food;
                 this._food = null;
@@ -670,7 +759,7 @@ export const counter_entity = (() => {
                 return item;   
             }
         }
-        Update() {
+        Update() {  
             if (this._frying) {
                 this.showProgressBar();
                 this.updateProgressBar(this._fryingProcess % 250 * 0.4 );
@@ -757,6 +846,7 @@ export const counter_entity = (() => {
                 
             }
             if (this._fryingProcess == 300) {
+                this._sound2 = this._loadAudio(this._audioWarning, true, this._volume,);
                 this.showWarning();
             }
             if (this._fryingProcess == 500 ){
@@ -768,6 +858,8 @@ export const counter_entity = (() => {
                 }   
                 this._fryingProcess = 0;
                 this._frying = false;
+                this._sound.stop();
+                this._sound2.stop();
                 this.hideProgressBar();
                 this.hideWarning();
             }
@@ -813,6 +905,14 @@ export const counter_entity = (() => {
             this._iconSpeed = 0.55;
             this._minX = this._pos.x + 1.2;
             this._maxX = this._pos.x - 1.7;
+            this._listener = params.listener;
+            this._volume = params.volume;
+            this._score = 0;
+            this._audioFail = 'Assets/_Assets/Sounds/SFX/SFX_delivery_fail01.wav';
+            this._audioSuccess = 'Assets/_Assets/Sounds/SFX/SFX_delivery_success01.wav';
+        }
+        _loadAudio(audioPath, loop, volume) {
+            super._loadAudio(audioPath, loop, volume);
         }
         _loadIcon(iconPath, scene, pos, scale, rotation) {
             // Override this method in child classes
@@ -838,21 +938,22 @@ export const counter_entity = (() => {
             // Thực hiện logic interact
             let listOfRecipeSpawned = this._parent.GetComponent('DeliveryManager').getListOfRecipeNameSpawned();
             let nameOfRecipe = null;
-            console.log(listOfRecipeSpawned);
-            console.log(plate.GetComponent('PlateEntity').GetListChildren());
             for (let i = 0; i < listOfRecipeSpawned.length; i++) {
                nameOfRecipe = plate.GetComponent('PlateEntity').CheckDeliveryPlate(listOfRecipeSpawned[i]);
                console.log(nameOfRecipe);
                 if (nameOfRecipe != null) break;
             }
             if (nameOfRecipe != null) {
+                this._loadAudio(this._audioSuccess, false, this._volume);
                 console.log('Delivered the recipe to the customer', nameOfRecipe);
+                this._score += 1;
                 this._parent.GetComponent('DeliveryManager').removeRecipe(nameOfRecipe);
                 this._successImage.style.visibility = 'visible';
                 setTimeout(() => {
                     this._successImage.style.visibility = 'hidden';
                 }, 1500);
             }else {
+                this._loadAudio(this._audioFail, false, this._volume);
                 console.log('failed to deliver the food to the customer', plate);
                 this._failedImage.style.visibility = 'visible';
                 setTimeout(() => {
@@ -896,7 +997,9 @@ export const counter_entity = (() => {
                    this._icon2.material.opacity = 0;
                }
         }
-
+        getScore() {
+            return this._score;
+        } 
     }
     return {
         ClearCounter: ClearCounter,
