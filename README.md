@@ -13,6 +13,8 @@
 - **Simple scoring system.**
 - **Basic user interface.**
 - **Simple control system, easy to use.**
+## Demo 
+[Link game's demo](https://youtu.be/tHg4uMXTQb0)
 ## Requirements(with versions we tested on)
 - **nodejs** 20.11.0
 - **npm** 10.2.4
