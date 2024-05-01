@@ -42,7 +42,7 @@ class GameMenu {
     document.body.appendChild(menuContainer);
 
     const backgroundImage = document.createElement('img');
-    backgroundImage.src = 'Assets/_Assets/Textures/Menu background_reduced.jpg';
+    backgroundImage.src = 'Assets/_Assets/Textures/Menu background.jpg';
     backgroundImage.classList.add('menu-background');
 
     document.body.appendChild(backgroundImage);
